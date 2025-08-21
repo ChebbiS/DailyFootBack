@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS user (
 
 CREATE TABLE IF NOT EXISTS joueur (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
+    user_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     nationalite VARCHAR(255),
     poste VARCHAR(255) NOT NULL,
@@ -23,10 +23,23 @@ CREATE TABLE IF NOT EXISTS agenda (
     description VARCHAR(255) NOT NULL,
     date_heure_debut DATETIME NOT NULL,
     date_heure_fin DATETIME NOT NULL,
-    type VARCHAR(255) NOT NULL,
-    owner_type VARCHAR(255) NOT NULL,
-    owner_id INT NOT NULL
+    type VARCHAR(255) NOT NULL
+);
 
+CREATE TABLE IF NOT EXISTS agenda_user (
+    agenda_id INT NOT NULL,
+    user_id INT NOT NULL,
+    PRIMARY KEY (agenda_id, user_id),
+    FOREIGN KEY (agenda_id) REFERENCES agenda(id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE IF NOT EXISTS agenda_joueur (
+    agenda_id INT NOT NULL,
+    joueur_id INT NOT NULL,
+    PRIMARY KEY (agenda_id, joueur_id),
+    FOREIGN KEY (agenda_id) REFERENCES agenda(id),
+    FOREIGN KEY (joueur_id) REFERENCES joueur(id)
 );
 
 CREATE TABLE IF NOT EXISTS statistique (
@@ -36,8 +49,8 @@ CREATE TABLE IF NOT EXISTS statistique (
     matchs_joues INT DEFAULT 0,
     buts INT DEFAULT 0,
     passes INT DEFAULT 0,
-    taille INT NOT NULL,
-    poids INT NOT NULL,
+    taille DECIMAL(3,2) NOT NULL,
+    poids DECIMAL (5,2) NOT NULL,
     cartons_jaunes INT DEFAULT 0,
     cartons_rouges INT DEFAULT 0,
     FOREIGN KEY (joueur_id) REFERENCES joueur(id)
