@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS joueur (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     name VARCHAR(255) NOT NULL,
+    nationalite VARCHAR(255),
     poste VARCHAR(255) NOT NULL,
     club VARCHAR(255),
     code_acces INT UNIQUE NOT NULL,
