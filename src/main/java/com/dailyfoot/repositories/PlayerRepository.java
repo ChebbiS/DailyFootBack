@@ -1,5 +1,6 @@
 package com.dailyfoot.repositories;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AgentRepository extends JpaRepository<Agent, Long> {
+public interface PlayerRepository extends JpaRepository<Player, Long> {
 }
