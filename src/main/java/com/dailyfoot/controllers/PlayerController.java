@@ -1,4 +1,4 @@
 package com.dailyfoot.controllers;
 
-public class JoueurController {
+public class PlayerController {
 }

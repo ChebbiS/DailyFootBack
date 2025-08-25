@@ -1,57 +1,73 @@
 package com.dailyfoot.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "player")
 public class Player {
 
     @Id
-    @GeneratedValue
-    private Long Id; 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    private Long player_id;
+    @ManyToOne
+    @JoinColumn(name = "agent_id", nullable = false)
+    private Agent agent;
+
+    private int playerId;
     private String name;
     private int age;
     private String nationality;
     private String poste;
     private String club;
+    private String email;
+    private String image;
+
+    @Column(unique = true, nullable = false)
     private int access_code;
-    
-    public Player () {
-        
+
+    public Player() {
     }
 
-    public Player (Long Id, Long player_id,  String name, int age, String nationality, String poste, String club, int access_code) {
-        
-        this.Id = Id;
-        this.player_id = player_id;
+    public Player(Agent agent, int playerId, String name, int age, String nationality,
+                  String poste, String club, String email, String image, int access_code) {
+        this.agent = agent;
+        this.playerId = playerId;
         this.name = name;
         this.age = age;
         this.nationality = nationality;
         this.poste = poste;
         this.club = club;
+        this.email = email;
+        this.image = image;
         this.access_code = access_code;
     }
 
-    public Long getId() {
-        return Id;
+    public int getId() {
+        return id;
     }
 
-    public void setId(Long Id) {
-        this.Id = Id;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public Long getPlayer_id() {
-        return player_id;
+    public Agent getAgent() {
+        return agent;
     }
 
-    public void setPlayer_id(Long player_id) {
-        this.player_id = player_id;
+    public void setAgent(Agent agent) {
+        this.agent = agent;
     }
 
-     public String getName() {
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
+    public String getName() {
         return name;
     }
 
@@ -91,12 +107,27 @@ public class Player {
         this.club = club;
     }
 
-    public int getAccess_code() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public int getAccessCode() {
         return access_code;
     }
 
-    public void setAccess_code(int access_code) {
+    public void setAccessCode(int access_code) {
         this.access_code = access_code;
     }
-    
 }
