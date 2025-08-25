@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS joueur (
     poste VARCHAR(255) NOT NULL,
     club VARCHAR(255),
     email VARCHAR(255) NOT NULL,
+    image VARCHAR(255),
     access_code INT UNIQUE NOT NULL,
     FOREIGN KEY (agent_id) REFERENCES agent(id)
 );
@@ -39,7 +40,7 @@ CREATE TABLE IF NOT EXISTS statistique (
     FOREIGN KEY (joueur_id) REFERENCES joueur(id)
 );
 
-CREATE TABLE IF NOT EXISTS agenda (
+CREATE TABLE IF NOT EXISTS event (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     description VARCHAR(255),
