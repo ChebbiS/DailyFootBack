@@ -1,3 +1,10 @@
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS joueur;
+DROP TABLE IF EXISTS agenda;
+DROP TABLE IF EXISTS agenda_user;
+DROP TABLE IF EXISTS agenda_joueur;
+DROP TABLE IF EXISTS statistique;
+
 CREATE TABLE IF NOT EXISTS user (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
@@ -8,12 +15,13 @@ CREATE TABLE IF NOT EXISTS user (
 
 CREATE TABLE IF NOT EXISTS joueur (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
+    player_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
-    nationalite VARCHAR(255),
+    age INT NOT NULL,
+    nationality VARCHAR(255),
     poste VARCHAR(255) NOT NULL,
     club VARCHAR(255),
-    code_acces INT UNIQUE NOT NULL,
+    access_code INT UNIQUE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
@@ -48,7 +56,7 @@ CREATE TABLE IF NOT EXISTS statistique (
     saison VARCHAR(50) NOT NULL,
     matchs_joues INT DEFAULT 0,
     buts INT DEFAULT 0,
-    passes INT DEFAULT 0,
+    passes_decisives INT DEFAULT 0,
     taille DECIMAL(3,2) NOT NULL,
     poids DECIMAL (5,2) NOT NULL,
     cartons_jaunes INT DEFAULT 0,
