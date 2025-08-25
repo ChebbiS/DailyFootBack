@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS statistique (
     matchs_joues INT DEFAULT 0,
     buts INT DEFAULT 0,
     passes_decisives INT DEFAULT 0,
-    taille INT NOT NULL,
-    poids DECIMAL(4,1) NOT NULL,
+    taille DECIMAL(5,2) NOT NULL,
+    poids DECIMAL(5,2) NOT NULL,
     cartons_jaunes INT DEFAULT 0,
     cartons_rouges INT DEFAULT 0,
     FOREIGN KEY (joueur_id) REFERENCES joueur(id)
@@ -48,5 +48,5 @@ CREATE TABLE IF NOT EXISTS event (
     date_heure_fin DATETIME NOT NULL,
     type VARCHAR(255) NOT NULL,
     owner_type ENUM('AGENT','JOUEUR') NOT NULL,
-    owner_id INT NOT NULL
+    owner_id INT NOT NULL,
 );
