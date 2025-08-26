@@ -35,9 +35,7 @@ public class UserService {
     }
 
     public Optional<User> getUserByEmail(String email) {
-        return userRepository.findAll()
-                .stream()
-                .filter(user -> user.getEmail().equals(email))
-                .findFirst();
+        return userRepository.findByEmail(email);
     }
+
 }
