@@ -32,8 +32,11 @@ public class PlayerService {
     public Optional<Player> getPlayerByPlayerId(Integer id) {
         return playerRepository.findAll()
                 .stream()
-                .filter(player -> player.getPlayerId() == id)
+                .filter(player -> player.getId() == id)
                 .findFirst();
+    }
+    public Optional<Player> getPlayerByAccessCode(int accessCode) {
+        return playerRepository.findByAccessCode(accessCode);
     }
 
 }

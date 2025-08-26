@@ -13,8 +13,6 @@ public class Player {
     @ManyToOne
     @JoinColumn(name = "agent_id", nullable = false)
     private Agent agent;
-
-    private int playerId;
     private String name;
     private int age;
     private String nationality;
@@ -32,7 +30,6 @@ public class Player {
     public Player(Agent agent, int playerId, String name, int age, String nationality,
                   String poste, String club, String email, String image, int accessCode) {
         this.agent = agent;
-        this.playerId = playerId;
         this.name = name;
         this.age = age;
         this.nationality = nationality;
@@ -57,14 +54,6 @@ public class Player {
 
     public void setAgent(Agent agent) {
         this.agent = agent;
-    }
-
-    public int getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
     }
 
     public String getName() {

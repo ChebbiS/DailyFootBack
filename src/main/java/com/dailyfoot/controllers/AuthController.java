@@ -1,6 +1,8 @@
 package com.dailyfoot.controllers;
+import com.dailyfoot.dto.LoginPlayerRequest;
 import com.dailyfoot.dto.LoginRequest;
 import com.dailyfoot.dto.RegisterRequest;
+import com.dailyfoot.entities.Player;
 import com.dailyfoot.entities.User;
 import com.dailyfoot.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,5 +42,14 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout() {
         return ResponseEntity.ok(Map.of("message", "logout successful"));
+    }
+
+    @PostMapping ("/loginPlayer")
+    public ResponseEntity<Player> loginPlayer(@RequestBody LoginPlayerRequest request) {
+        Player player = authService.loginPlayer(request.getCodeAccess());
+        if (player == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(player);
     }
 }
