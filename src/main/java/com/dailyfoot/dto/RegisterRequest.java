@@ -1,18 +1,18 @@
 package com.dailyfoot.dto;
-
-import com.dailyfoot.entities.User;
-
-import javax.management.relation.Role;
+import com.dailyfoot.entities.User.Role;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 public class RegisterRequest {
     private String email;
     private String password;
     private String name;
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     public RegisterRequest() {}
 
-    public RegisterRequest(String email, String password, String name, String role) {
+    public RegisterRequest(String email, String password, String name, Role role) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -43,11 +43,11 @@ public class RegisterRequest {
         this.name = name;
     }
 
-    public User.Role getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(User.Role role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }

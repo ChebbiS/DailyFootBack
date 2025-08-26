@@ -3,7 +3,6 @@ package com.dailyfoot.services;
 import com.dailyfoot.dto.LoginRequest;
 import com.dailyfoot.dto.RegisterRequest;
 import com.dailyfoot.entities.User;
-import com.dailyfoot.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
