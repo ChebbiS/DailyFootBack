@@ -1,11 +1,10 @@
 package com.dailyfoot.services;
 
-import com.mailjet.client.errors.MailjetException;
-import com.mailjet.client.errors.MailjetSocketTimeoutException;
+import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
-import com.mailjet.client.ClientOptions;
+import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,42 +14,35 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailService {
 
-    @Value("${mailjet.api.key}")
-    private String apiKey;
+    private final MailjetClient mailjetClient;
 
-    @Value("${mailjet.api.secret}")
-    private String apiSecret;
+    public MailService(
+            @Value("${mailjet.api.key.public}") String apiKeyPublic,
+            @Value("${mailjet.api.key.private}") String apiKeyPrivate
+    ) {
+        this.mailjetClient = new MailjetClient(apiKeyPublic, apiKeyPrivate, new ClientOptions("v3.1"));
+    }
 
-    @Value("${mailjet.sender.email}")
-    private String senderEmail;
-
-    @Value("${mailjet.sender.name}")
-    private String senderName;
-
-    public void sendAccessCode(String toEmail, String toName, int accessCode) {
-        MailjetClient client = new MailjetClient(apiKey, apiSecret, new ClientOptions("v3.1"));
-
-        JSONObject message = new JSONObject()
-                .put(Emailv31.Message.FROM, new JSONObject()
-                        .put("Email", senderEmail)
-                        .put("Name", senderName))
-                .put(Emailv31.Message.TO, new JSONArray()
-                        .put(new JSONObject()
-                                .put("Email", toEmail)
-                                .put("Name", toName)))
-                .put(Emailv31.Message.SUBJECT, "Votre code d'accès DailyFoot")
-                .put(Emailv31.Message.TEXTPART, "Bonjour " + toName + ", votre code d'accès est : " + accessCode)
-                .put(Emailv31.Message.HTMLPART, "<h3>Bonjour " + toName + "</h3><p>Votre code d'accès est : <b>" + accessCode + "</b></p>");
+    public void sendEmail(String toEmail, String toName, String subject, String textPart, String htmlPart) throws MailjetException {
 
         MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                .property(Emailv31.MESSAGES, new JSONArray().put(message));
+                .property(Emailv31.MESSAGES, new JSONArray()
+                        .put(new JSONObject()
+                                .put(Emailv31.Message.FROM, new JSONObject()
+                                        .put("Email", "no-reply@dailyfoot.com")
+                                        .put("Name", "DailyFoot"))
+                                .put(Emailv31.Message.TO, new JSONArray()
+                                        .put(new JSONObject()
+                                                .put("Email", toEmail)
+                                                .put("Name", toName)))
+                                .put(Emailv31.Message.SUBJECT, subject)
+                                .put(Emailv31.Message.TEXTPART, textPart)
+                                .put(Emailv31.Message.HTMLPART, htmlPart)
+                        )
+                );
 
-        try {
-            MailjetResponse response = client.post(request);
-            System.out.println("Mail status: " + response.getStatus());
-            System.out.println("Mail data: " + response.getData());
-        } catch (MailjetException | MailjetSocketTimeoutException e) {
-            e.printStackTrace();
-        }
+        MailjetResponse response = mailjetClient.post(request);
+        System.out.println("Status: " + response.getStatus());
+        System.out.println("Response: " + response.getData());
     }
 }
