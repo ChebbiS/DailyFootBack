@@ -23,14 +23,14 @@ public class Player {
     private String email;
     private String image;
 
-    @Column(unique = true, nullable = false)
-    private int access_code;
+    @Column(name = "access_code", unique = true, nullable = false)
+    private int accessCode;
 
     public Player() {
     }
 
     public Player(Agent agent, int playerId, String name, int age, String nationality,
-                  String poste, String club, String email, String image, int access_code) {
+                  String poste, String club, String email, String image, int accessCode) {
         this.agent = agent;
         this.playerId = playerId;
         this.name = name;
@@ -40,7 +40,7 @@ public class Player {
         this.club = club;
         this.email = email;
         this.image = image;
-        this.access_code = access_code;
+        this.accessCode = accessCode;
     }
 
     public int getId() {
@@ -124,10 +124,10 @@ public class Player {
     }
 
     public int getAccessCode() {
-        return access_code;
+        return accessCode;
     }
 
-    public void setAccessCode(int access_code) {
-        this.access_code = access_code;
+    public void setAccessCode(int accessCode) {
+        this.accessCode = accessCode;
     }
 }

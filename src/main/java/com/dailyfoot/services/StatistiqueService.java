@@ -34,10 +34,7 @@ public class StatistiqueService {
         statistiqueRepository.deleteById(id);
     }
 
-    public Optional<Statistique> getStatistiqueByPlayerId(Integer id) {
-        return statistiqueRepository.findAll()
-                .stream()
-                .filter(statistique -> statistique.getPlayer().getPlayerId() == id)
-                .findFirst();
+    public Optional<Statistique> getStatistiqueByPlayerId(Integer PlayerId) {
+        return statistiqueRepository.findByPlayerId(PlayerId);
     }
 }
