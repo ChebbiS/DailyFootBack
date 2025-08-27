@@ -1,6 +1,11 @@
 package com.dailyfoot.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class LoginPlayerRequest {
+    @NotBlank(message = "Le code d'accès est obligatoire")
+    @NotNull
     private int codeAccess;
 
     public LoginPlayerRequest() {}

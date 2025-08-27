@@ -1,11 +1,21 @@
 package com.dailyfoot.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class CreatePlayerRequest {
+    @NotBlank(message = "Le nom est obligatoire")
     private String name;
+    @NotBlank(message = "L'age est obligatoire")
+    @NotNull
     private int age;
+    @NotBlank(message = "La nationalité est obligatoire")
     private String nationality;
     private String poste;
     private String club;
+    @NotBlank(message = "L'email est obligatoire")
+    @Email
     private String email;
     private String image;
 
