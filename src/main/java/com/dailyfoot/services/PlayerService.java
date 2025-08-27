@@ -45,7 +45,12 @@ public class PlayerService {
             String subject = "Votre code d'accès DailyFoot";
             String textPart = "Bonjour " + savedPlayer.getName() + ",\nVoici votre code d'accès : " + accessCode;
             String htmlPart = "<h3>Bonjour " + savedPlayer.getName() + "</h3><p>Voici votre code d'accès : <b>" + accessCode + "</b></p>";
-            mailService.sendEmail(savedPlayer.getEmail(), savedPlayer.getName(), subject, textPart, htmlPart);
+            mailService.sendAccessCodeEmail(
+                    savedPlayer.getEmail(),
+                    savedPlayer.getName(),
+                    accessCode
+            );
+
         } catch (Exception e) {
             System.err.println("Erreur lors de l'envoi de l'email : " + e.getMessage());
         }

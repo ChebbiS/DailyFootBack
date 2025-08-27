@@ -1,6 +1,5 @@
 package com.dailyfoot.services;
 
-import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
 import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
@@ -14,35 +13,47 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailService {
 
-    private final MailjetClient mailjetClient;
+    private final MailjetClient client;
+    private final String fromEmail;
+    private final String fromName;
 
     public MailService(
             @Value("${mailjet.api.key.public}") String apiKeyPublic,
-            @Value("${mailjet.api.key.private}") String apiKeyPrivate
+            @Value("${mailjet.api.key.private}") String apiKeyPrivate,
+            @Value("${mailjet.from.email}") String fromEmail,
+            @Value("${mailjet.from.name}") String fromName
     ) {
-        this.mailjetClient = new MailjetClient(apiKeyPublic, apiKeyPrivate, new ClientOptions("v3.1"));
+
+        this.client = new MailjetClient(apiKeyPublic, apiKeyPrivate);
+        this.fromEmail = fromEmail;
+        this.fromName = fromName;
     }
 
-    public void sendEmail(String toEmail, String toName, String subject, String textPart, String htmlPart) throws MailjetException {
+    public void sendAccessCodeEmail(String toEmail, String toName, int accessCode) {
+        try {
+            MailjetRequest request = new MailjetRequest(Emailv31.resource)
+                    .property(Emailv31.MESSAGES, new JSONArray()
+                            .put(new JSONObject()
+                                    .put(Emailv31.Message.FROM, new JSONObject()
+                                            .put("Email", fromEmail)
+                                            .put("Name", fromName))
+                                    .put(Emailv31.Message.TO, new JSONArray()
+                                            .put(new JSONObject()
+                                                    .put("Email", toEmail)
+                                                    .put("Name", toName)))
+                                    .put(Emailv31.Message.SUBJECT, "Votre code d'accès DailyFoot")
+                                    .put(Emailv31.Message.TEXTPART, "Bonjour " + toName + ", votre code d'accès est : " + accessCode)
+                                    .put(Emailv31.Message.HTMLPART,
+                                            "<h3>Bonjour " + toName + "</h3>" +
+                                                    "<p>Voici votre code d'accès : <b>" + accessCode + "</b></p>")));
 
-        MailjetRequest request = new MailjetRequest(Emailv31.resource)
-                .property(Emailv31.MESSAGES, new JSONArray()
-                        .put(new JSONObject()
-                                .put(Emailv31.Message.FROM, new JSONObject()
-                                        .put("Email", "no-reply@dailyfoot.com")
-                                        .put("Name", "DailyFoot"))
-                                .put(Emailv31.Message.TO, new JSONArray()
-                                        .put(new JSONObject()
-                                                .put("Email", toEmail)
-                                                .put("Name", toName)))
-                                .put(Emailv31.Message.SUBJECT, subject)
-                                .put(Emailv31.Message.TEXTPART, textPart)
-                                .put(Emailv31.Message.HTMLPART, htmlPart)
-                        )
-                );
+            MailjetResponse response = client.post(request);
+            System.out.println("Mailjet status: " + response.getStatus());
+            System.out.println("Mailjet data: " + response.getData());
 
-        MailjetResponse response = mailjetClient.post(request);
-        System.out.println("Status: " + response.getStatus());
-        System.out.println("Response: " + response.getData());
+        } catch (MailjetException e) {
+            System.err.println("Erreur d'envoi Mailjet: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
