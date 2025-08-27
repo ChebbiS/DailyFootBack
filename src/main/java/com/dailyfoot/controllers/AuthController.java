@@ -1,7 +1,5 @@
 package com.dailyfoot.controllers;
-import com.dailyfoot.dto.LoginPlayerRequest;
-import com.dailyfoot.dto.LoginRequest;
-import com.dailyfoot.dto.RegisterRequest;
+import com.dailyfoot.dto.*;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.entities.User;
 import com.dailyfoot.services.AuthService;
@@ -32,12 +30,15 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         User user = authService.login(request);
         if (user == null) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).build(); // Modifié par une exception
         }
-        return ResponseEntity.ok(user);
+        LoginResponse response = new LoginResponse(
+                user.getName()
+        );
+        return ResponseEntity.ok(response);
     }
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout() {
@@ -45,11 +46,19 @@ public class AuthController {
     }
 
     @PostMapping ("/loginPlayer")
-    public ResponseEntity<Player> loginPlayer(@RequestBody LoginPlayerRequest request) {
+    public ResponseEntity<PlayerLoginResponse> loginPlayer(@RequestBody LoginPlayerRequest request) {
         Player player = authService.loginPlayer(request.getCodeAccess());
         if (player == null) {
-            return ResponseEntity.status(401).build();
+            return ResponseEntity.status(401).build(); // Gerer l'exception
         }
-        return ResponseEntity.ok(player);
+        PlayerLoginResponse response = new PlayerLoginResponse(
+                player.getName(),
+                player.getClub(),
+                player.getImage(),
+                player.getNationality(),
+                player.getAge(),
+                player.getPoste()
+        );
+        return ResponseEntity.ok(response);
     }
 }
