@@ -1,6 +1,7 @@
 package com.dailyfoot.services;
 
 import com.dailyfoot.dto.CreatePlayerRequest;
+import com.dailyfoot.dto.PlayerResponse;
 import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.repositories.PlayerRepository;
@@ -58,12 +59,30 @@ public class PlayerService {
         return savedPlayer;
     }
 
-    public List<Player> getAllPlayers() {
-        return playerRepository.findAll();
+    public List<PlayerResponse> getAllPlayers() {
+        return playerRepository.findAll().stream()
+                .map(player -> new PlayerResponse(
+                        player.getName(),
+                        player.getPoste(),
+                        player.getImage(),
+                        player.getClub(),
+                        player.getAge(),
+                        player.getNationality()
+                ))
+                .toList();
     }
 
-    public Optional<Player> getPlayerById(Integer id) {
-        return playerRepository.findById(id);
+
+    public Optional<PlayerResponse> getPlayerById(Integer id) {
+        return playerRepository.findById(id)
+        .map(player -> new PlayerResponse(
+                player.getName(),
+                player.getPoste(),
+                player.getImage(),
+                player.getClub(),
+                player.getAge(),
+                player.getNationality()
+        ));
     }
 
     public Player savePlayer(Player player) {

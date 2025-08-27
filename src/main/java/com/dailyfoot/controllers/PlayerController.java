@@ -1,6 +1,7 @@
 package com.dailyfoot.controllers;
 
 import com.dailyfoot.dto.CreatePlayerRequest;
+import com.dailyfoot.dto.PlayerResponse;
 import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.services.PlayerService;
@@ -39,15 +40,17 @@ public class PlayerController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Player>> getAllPlayers() {
-        List<Player> players = playerService.getAllPlayers();
+    @GetMapping("/ListOfPlayers")
+    public ResponseEntity<List<PlayerResponse>> getAllPlayers() {
+        List<PlayerResponse> players = playerService.getAllPlayers();
         return ResponseEntity.ok(players);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Player> getPlayerById(@PathVariable Integer id) {
-        Optional<Player> player = playerService.getPlayerById(id);
-        return player.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build()); // Gerer l'except
+    public ResponseEntity<PlayerResponse> getPlayerById(@PathVariable Integer id) {
+        Optional<PlayerResponse> player = playerService.getPlayerById(id);
+        return player.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
 }
