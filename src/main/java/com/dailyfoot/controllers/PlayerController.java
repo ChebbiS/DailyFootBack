@@ -35,7 +35,7 @@ public class PlayerController {
             return ResponseEntity.ok(createdPlayer);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).build(); // gerer l'exception'
         }
     }
 
@@ -48,6 +48,6 @@ public class PlayerController {
     @GetMapping("/{id}")
     public ResponseEntity<Player> getPlayerById(@PathVariable Integer id) {
         Optional<Player> player = playerService.getPlayerById(id);
-        return player.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return player.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build()); // Gerer l'except
     }
 }

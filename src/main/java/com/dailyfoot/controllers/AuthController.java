@@ -3,6 +3,7 @@ import com.dailyfoot.dto.*;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.entities.User;
 import com.dailyfoot.services.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,13 +25,13 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterRequestResponse> register(@Valid @RequestBody RegisterRequest request) {
         User newUser = authService.register(request);
-        return ResponseEntity.ok(newUser);
+        return ResponseEntity.ok(new RegisterRequestResponse("Votre compte a été avec succès !"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         User user = authService.login(request);
         if (user == null) {
             return ResponseEntity.status(401).build(); // Modifié par une exception
@@ -46,7 +47,7 @@ public class AuthController {
     }
 
     @PostMapping ("/loginPlayer")
-    public ResponseEntity<PlayerLoginResponse> loginPlayer(@RequestBody LoginPlayerRequest request) {
+    public ResponseEntity<PlayerLoginResponse> loginPlayer(@Valid @RequestBody LoginPlayerRequest request) {
         Player player = authService.loginPlayer(request.getCodeAccess());
         if (player == null) {
             return ResponseEntity.status(401).build(); // Gerer l'exception
