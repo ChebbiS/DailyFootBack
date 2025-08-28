@@ -1,7 +1,11 @@
 package com.dailyfoot.config;
 
+import com.dailyfoot.entities.Agent;
+import com.dailyfoot.repositories.AgentRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -9,7 +13,8 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-
+@Autowired
+private AgentRepository agentRepository;
     private final String SECRET_KEY = "D76ai6447L9456786YF3113457965OO980T"; // au moins 32 chars
     private final long EXPIRATION = 1000 * 60 * 60 * 10; // 10 heures
 
@@ -48,5 +53,14 @@ public class JwtUtil {
                 .getBody()
                 .getExpiration()
                 .before(new Date());
+    }
+    public Agent getCurrentAgent() {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        Integer agentId = userDetails.getAgentId();
+        return agentRepository.findByUserId(agentId)
+                .orElseThrow(() -> new RuntimeException("Agent non trouvé"));
     }
 }

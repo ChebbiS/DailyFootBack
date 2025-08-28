@@ -1,5 +1,7 @@
 package com.dailyfoot.dto;
 
+import com.dailyfoot.entities.Player;
+
 public class PlayerResponse {
     private String name;
     private String poste;
@@ -7,6 +9,7 @@ public class PlayerResponse {
     private String club;
     private int age;
     private String nationality;
+    private String agentId;
 
     public PlayerResponse(String name, String poste, String image, String club, int age, String nationality) {
         this.name = name;
@@ -15,6 +18,15 @@ public class PlayerResponse {
         this.club = club;
         this.age = age;
         this.nationality = nationality;
+    }
+    public PlayerResponse(Player player) {
+        this.name = player.getName();
+        this.poste = player.getPoste();
+        this.image = player.getImage();
+        this.club = player.getClub();
+        this.age = player.getAge();
+        this.nationality = player.getNationality();
+        this.agentId = player.getAgent().getUser().getName();
     }
 
     public String getName() {

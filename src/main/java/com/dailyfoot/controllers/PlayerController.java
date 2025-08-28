@@ -9,6 +9,7 @@ import com.dailyfoot.repositories.AgentRepository;
 import com.dailyfoot.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,25 +31,10 @@ public class PlayerController {
     }
 
     @PostMapping("/addPlayer")
-    public ResponseEntity<Player> createPlayer(@RequestBody CreatePlayerRequest request) {
-        try {
-            // Récupérer l'agent connecté via JWT
-            CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder
-                    .getContext()
-                    .getAuthentication()
-                    .getPrincipal();
-
-            Integer agentId = userDetails.getAgentId(); // doit exister dans CustomUserDetails
-            Agent agent = agentRepository.findByUserId(agentId)
-                    .orElseThrow(() -> new RuntimeException("Agent non trouvé"));
-
-            Player createdPlayer = playerService.createPlayer(agentId, request);
-
-            return ResponseEntity.ok(createdPlayer);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).build();
-        }
+    @PreAuthorize("hasRole('AGENT', 'ADMIN')")
+    public ResponseEntity<PlayerResponse> createPlayer(@RequestBody CreatePlayerRequest request) {
+        Player createdPlayer = playerService.createPlayer(request);
+        return ResponseEntity.ok(new PlayerResponse(createdPlayer));
     }
 
     @GetMapping("/ListOfPlayers")

@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
     Optional<Player> findByAccessCode(int accessCode);
+    boolean existsByEmail(String email);
 }
