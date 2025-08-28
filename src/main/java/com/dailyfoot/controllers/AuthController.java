@@ -1,5 +1,5 @@
 package com.dailyfoot.controllers;
-import com.dailyfoot.config.CustomUserDetails;
+
 import com.dailyfoot.config.JwtUtil;
 import com.dailyfoot.dto.*;
 import com.dailyfoot.entities.Player;
@@ -9,8 +9,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,12 +46,13 @@ public class AuthController {
         String token = jwtUtil.generateToken(user.getEmail()); // email = username
         return ResponseEntity.ok(new LoginResponse(user.getEmail(), token));
     }
+
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout() {
         return ResponseEntity.ok(Map.of("message", "logout successful"));
     }
 
-    @PostMapping ("/loginPlayer")
+    @PostMapping("/loginPlayer")
     public ResponseEntity<PlayerLoginResponse> loginPlayer(@Valid @RequestBody LoginPlayerRequest request) {
         Player player = authService.loginPlayer(request.getCodeAccess());
         if (player == null) {

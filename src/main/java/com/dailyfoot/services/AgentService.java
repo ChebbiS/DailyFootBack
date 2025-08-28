@@ -16,15 +16,19 @@ public class AgentService {
     public AgentService(AgentRepository agentRepository) {
         this.agentRepository = agentRepository;
     }
+
     public List<Agent> getAllAgents() {
         return agentRepository.findAll();
     }
+
     public Agent saveAgent(Agent agent) {
         return agentRepository.save(agent);
     }
+
     public Optional<Agent> getAgentById(Integer id) {
         return agentRepository.findById(id);
     }
+
     public void deleteAgent(Integer id) {
         agentRepository.deleteById(id);
     }

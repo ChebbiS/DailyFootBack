@@ -2,6 +2,7 @@ package com.dailyfoot.dto;
 
 public class RegisterRequestResponse {
     private String message;
+
     public RegisterRequestResponse(String message) {
         this.message = message;
     }

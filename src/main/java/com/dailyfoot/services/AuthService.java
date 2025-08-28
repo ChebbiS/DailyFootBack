@@ -21,7 +21,7 @@ public class AuthService {
     private final AgentService agentService;
 
     @Autowired
-    public AuthService(UserService userService , PlayerService playerService,
+    public AuthService(UserService userService, PlayerService playerService,
                        PlayerRepository playerRepository, AgentService agentService) {
         this.userService = userService;
         this.passwordEncoder = new BCryptPasswordEncoder();
@@ -44,6 +44,7 @@ public class AuthService {
         }
         return savedUser;
     }
+
     public User login(LoginRequest request) {
         Optional<User> userOpt = userService.getUserByEmail(request.getEmail());
         if (userOpt.isPresent()) {
@@ -54,9 +55,10 @@ public class AuthService {
         }
         return null;
     }
+
     public Player loginPlayer(int accessCode) {
         Optional<Player> playerOpt = playerService.getPlayerByAccessCode(accessCode);
         return playerOpt.orElse(null);
-        }
     }
+}
 

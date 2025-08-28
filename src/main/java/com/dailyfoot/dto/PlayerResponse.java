@@ -19,6 +19,7 @@ public class PlayerResponse {
         this.age = age;
         this.nationality = nationality;
     }
+
     public PlayerResponse(Player player) {
         this.name = player.getName();
         this.poste = player.getPoste();

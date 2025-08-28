@@ -1,4 +1,5 @@
 package com.dailyfoot.dto;
+
 import com.dailyfoot.entities.User.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,7 +23,8 @@ public class RegisterRequest {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public RegisterRequest() {}
+    public RegisterRequest() {
+    }
 
     public RegisterRequest(String email, String password, String name, Role role) {
         this.email = email;

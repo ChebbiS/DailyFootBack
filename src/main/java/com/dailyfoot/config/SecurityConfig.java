@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .cors().and()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/players/**").hasAnyRole( "ADMIN","AGENT")
+                .requestMatchers("/players/**").hasAnyRole("ADMIN", "AGENT")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

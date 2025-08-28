@@ -36,6 +36,7 @@ public class AgentController {
         Player player = playerService.createPlayer(agentId, request);
         return ResponseEntity.ok(player);
     }
+
     @DeleteMapping("/deletePlayer")
     public ResponseEntity<Map<String, String>> deletePlayer(@RequestParam int playerId) {
         playerService.deletePlayer(playerId);

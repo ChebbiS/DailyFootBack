@@ -25,7 +25,8 @@ public class Event {
         AGENT, PLAYER
     }
 
-    public Event() {}
+    public Event() {
+    }
 
     public Event(String title, String description, String type,
                  java.time.LocalDateTime dateHeureDebut,
@@ -40,27 +41,67 @@ public class Event {
         this.ownerId = ownerId;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public java.time.LocalDateTime getDateHeureDebut() { return dateHeureDebut; }
-    public void setDateHeureDebut(java.time.LocalDateTime dateHeureDebut) { this.dateHeureDebut = dateHeureDebut; }
+    public String getDescription() {
+        return description;
+    }
 
-    public java.time.LocalDateTime getDateHeureFin() { return dateHeureFin; }
-    public void setDateHeureFin(java.time.LocalDateTime dateHeureFin) { this.dateHeureFin = dateHeureFin; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public OwnerType getOwnerType() { return ownerType; }
-    public void setOwnerType(OwnerType ownerType) { this.ownerType = ownerType; }
+    public String getType() {
+        return type;
+    }
 
-    public int getOwnerId() { return ownerId; }
-    public void setOwnerId(int ownerId) { this.ownerId = ownerId; }
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public java.time.LocalDateTime getDateHeureDebut() {
+        return dateHeureDebut;
+    }
+
+    public void setDateHeureDebut(java.time.LocalDateTime dateHeureDebut) {
+        this.dateHeureDebut = dateHeureDebut;
+    }
+
+    public java.time.LocalDateTime getDateHeureFin() {
+        return dateHeureFin;
+    }
+
+    public void setDateHeureFin(java.time.LocalDateTime dateHeureFin) {
+        this.dateHeureFin = dateHeureFin;
+    }
+
+    public OwnerType getOwnerType() {
+        return ownerType;
+    }
+
+    public void setOwnerType(OwnerType ownerType) {
+        this.ownerType = ownerType;
+    }
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
+    }
 }

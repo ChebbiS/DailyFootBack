@@ -20,7 +20,8 @@ public class Agenda {
     @Column(name = "color", nullable = false, length = 7)
     private String color;
 
-    public Agenda() {}
+    public Agenda() {
+    }
 
     public Agenda(OwnerType ownerType, int ownerId, String color) {
         this.ownerType = ownerType;

@@ -10,7 +10,6 @@ import com.dailyfoot.exceptions.PlayerAlreadyExistsException;
 import com.dailyfoot.repositories.AgentRepository;
 import com.dailyfoot.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +20,8 @@ import java.util.Optional;
 
 @Service
 public class PlayerService {
-@Autowired
-private JwtUtil jwtUtil;
+    @Autowired
+    private JwtUtil jwtUtil;
     private final PlayerRepository playerRepository;
     private final AgentRepository agentRepository;
     private final MailService mailService;
@@ -114,14 +113,14 @@ private JwtUtil jwtUtil;
 
     public Optional<PlayerResponse> getPlayerById(Integer id) {
         return playerRepository.findById(id)
-        .map(player -> new PlayerResponse(
-                player.getName(),
-                player.getPoste(),
-                player.getImage(),
-                player.getClub(),
-                player.getAge(),
-                player.getNationality()
-        ));
+                .map(player -> new PlayerResponse(
+                        player.getName(),
+                        player.getPoste(),
+                        player.getImage(),
+                        player.getClub(),
+                        player.getAge(),
+                        player.getNationality()
+                ));
     }
 
     public Player savePlayer(Player player) {

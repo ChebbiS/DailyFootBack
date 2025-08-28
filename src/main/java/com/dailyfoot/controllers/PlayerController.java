@@ -1,16 +1,13 @@
 package com.dailyfoot.controllers;
 
-import com.dailyfoot.config.CustomUserDetails;
 import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerResponse;
-import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.repositories.AgentRepository;
 import com.dailyfoot.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

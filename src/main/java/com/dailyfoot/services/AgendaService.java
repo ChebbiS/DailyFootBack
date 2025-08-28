@@ -17,18 +17,23 @@ public class AgendaService {
     public AgendaService(AgendaRepository agendaRepository) {
         this.agendaRepository = agendaRepository;
     }
+
     public List<Agenda> getAllAgendas() {
         return agendaRepository.findAll();
     }
+
     public Agenda saveAgenda(Agenda agenda) {
         return agendaRepository.save(agenda);
     }
+
     public Optional<Agenda> getAgendaById(Integer id) {
         return agendaRepository.findById(id);
     }
+
     public void deleteAgenda(Integer id) {
         agendaRepository.deleteById(id);
     }
+
     public Optional<Agenda> getAgendaByOwnerType(OwnerType ownerType) {
         return agendaRepository.findByOwnerType(ownerType);
     }
