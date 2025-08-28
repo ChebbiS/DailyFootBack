@@ -33,7 +33,7 @@ public class AgentController {
         }
 
         Agent agent = optionalAgent.get();
-        Player player = playerService.createPlayer(agent, request);
+        Player player = playerService.createPlayer(agentId, request);
         return ResponseEntity.ok(player);
     }
     @DeleteMapping("/deletePlayer")

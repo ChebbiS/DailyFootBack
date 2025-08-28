@@ -1,4 +1,6 @@
 package com.dailyfoot.controllers;
+import com.dailyfoot.config.CustomUserDetails;
+import com.dailyfoot.config.JwtUtil;
 import com.dailyfoot.dto.*;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.entities.User;
@@ -6,6 +8,9 @@ import com.dailyfoot.services.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +21,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-
+    @Autowired
+    private AuthenticationManager authenticationManager;
     private final AuthService authService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthController(AuthenticationManager authenticationManager, AuthService authService) {
         this.authService = authService;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/register")
@@ -34,12 +43,10 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         User user = authService.login(request);
         if (user == null) {
-            return ResponseEntity.status(401).build(); // Modifié par une exception
+            return ResponseEntity.status(401).body(new LoginResponse("Identifiants invalides", null));
         }
-        LoginResponse response = new LoginResponse(
-                user.getName()
-        );
-        return ResponseEntity.ok(response);
+        String token = jwtUtil.generateToken(user.getEmail()); // email = username
+        return ResponseEntity.ok(new LoginResponse(user.getEmail(), token));
     }
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout() {

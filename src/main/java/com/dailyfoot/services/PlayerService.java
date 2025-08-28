@@ -4,6 +4,7 @@ import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerResponse;
 import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
+import com.dailyfoot.repositories.AgentRepository;
 import com.dailyfoot.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,20 +18,23 @@ import java.util.Optional;
 public class PlayerService {
 
     private final PlayerRepository playerRepository;
+    private final AgentRepository agentRepository;
     private final MailService mailService;
 
     @Autowired
-    public PlayerService(PlayerRepository playerRepository, MailService mailService) {
+    public PlayerService(AgentRepository agentRepository, PlayerRepository playerRepository, MailService mailService) {
         this.playerRepository = playerRepository;
         this.mailService = mailService;
+        this.agentRepository = agentRepository;
     }
 
     @Transactional
-    public Player createPlayer(Agent agent, CreatePlayerRequest request) {
+    public Player createPlayer(Integer agent, CreatePlayerRequest request) {
+        Agent foundAgent = agentRepository.findByUserId(agent)
+                .orElseThrow(() -> new RuntimeException("Agent non trouvé"));
         int accessCode = generateAccessCode();
 
         Player player = new Player();
-        player.setAgent(agent);
         player.setName(request.getName());
         player.setAge(request.getAge());
         player.setNationality(request.getNationality());
@@ -39,6 +43,7 @@ public class PlayerService {
         player.setEmail(request.getEmail());
         player.setImage(request.getImage());
         player.setAccessCode(accessCode);
+        player.setAgent(foundAgent);
 
         Player savedPlayer = playerRepository.save(player);
 
