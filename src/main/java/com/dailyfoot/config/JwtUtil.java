@@ -63,6 +63,6 @@ public class JwtUtil {
                 .getPrincipal();
         Integer agentId = userDetails.getAgentId();
         return agentRepository.findByUserId(agentId)
-                .orElseThrow(() -> new RuntimeException("Agent non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Agent non trouvé")); // Capter l'exception
     }
 }

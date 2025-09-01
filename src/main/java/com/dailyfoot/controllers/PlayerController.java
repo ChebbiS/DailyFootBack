@@ -44,6 +44,6 @@ public class PlayerController {
     public ResponseEntity<PlayerResponse> getPlayerById(@PathVariable Integer id) {
         Optional<PlayerResponse> player = playerService.getPlayerById(id);
         return player.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build()); // Capter l'exception si le player n'existe pas
     }
 }
