@@ -76,7 +76,7 @@ public class MailService {
             System.out.println("Mail envoyé à " + toEmail + " avec le statut : " + response.getStatus());
 
         } catch (MailjetException e) {
-            System.err.println("Erreur d'envoi Mailjet: " + e.getMessage());
+            System.err.println("Erreur d'envoi Mailjet: " + e.getMessage()); // a capter dans les exceptions
             e.printStackTrace();
         }
     }

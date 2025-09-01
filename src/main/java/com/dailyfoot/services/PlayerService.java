@@ -37,7 +37,7 @@ public class PlayerService {
     @Transactional
     public Player createPlayer(Integer agent, CreatePlayerRequest request) {
         Agent foundAgent = agentRepository.findByUserId(agent)
-                .orElseThrow(() -> new RuntimeException("Agent non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Agent non trouvé")); // A capter dans les exceptions
         int accessCode = generateAccessCode();
         if (playerRepository.existsByEmail(request.getEmail())) {
             throw new PlayerAlreadyExistsException("Un joueur avec cet email existe déjà !");
@@ -59,14 +59,12 @@ public class PlayerService {
         try {
             String subject = "Bienvenue sur DailyFoot - Votre code d'accès";
 
-            // Version texte simple (fallback)
             String textPart = "Bonjour " + savedPlayer.getName() + ",\n\n"
                     + "Bienvenue sur DailyFoot !\n"
                     + "Voici votre code d'accès pour vous connecter : " + accessCode + "\n\n"
                     + "Conservez-le précieusement et ne le partagez avec personne.\n\n"
                     + "L'équipe DailyFoot";
 
-            // Version HTML simple et lisible
             String htmlPart = "<!DOCTYPE html>"
                     + "<html lang='fr'>"
                     + "<head><meta charset='UTF-8'><title>DailyFoot</title></head>"
@@ -90,7 +88,8 @@ public class PlayerService {
             );
 
         } catch (Exception e) {
-            System.err.println("Erreur lors de l'envoi de l'email : " + e.getMessage());
+            System.err.println("Erreur lors de l'envoi de l'email : " + e.getMessage()); // a capter dans les exceptions
+            e.printStackTrace();
         }
 
 
@@ -154,7 +153,7 @@ public class PlayerService {
                 .getPrincipal();
         Integer agentId = userDetails.getAgentId();
         return agentRepository.findByUserId(agentId)
-                .orElseThrow(() -> new RuntimeException("Agent non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Agent non trouvé")); // A capter dans les exceptions (se répète 2x)
     }
 
 

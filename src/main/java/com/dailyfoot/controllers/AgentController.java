@@ -29,7 +29,7 @@ public class AgentController {
     public ResponseEntity<Player> addPlayer(@Valid @RequestBody CreatePlayerRequest request, @RequestParam int agentId) {
         Optional<Agent> optionalAgent = agentRepository.findById(agentId);
         if (optionalAgent.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build(); // A capter dans les exceptions (si optionalAgent est vide)
         }
 
         Agent agent = optionalAgent.get();

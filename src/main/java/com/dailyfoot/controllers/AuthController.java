@@ -41,7 +41,7 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         User user = authService.login(request);
         if (user == null) {
-            return ResponseEntity.status(401).body(new LoginResponse("Identifiants invalides", null));
+            return ResponseEntity.status(401).body(new LoginResponse("Identifiants invalides", null)); // A capter dans les exceptions
         }
         String token = jwtUtil.generateToken(user.getEmail()); // email = username
         return ResponseEntity.ok(new LoginResponse(user.getEmail(), token));
