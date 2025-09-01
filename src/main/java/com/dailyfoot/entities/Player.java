@@ -2,9 +2,14 @@ package com.dailyfoot.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "player")
 public class Player {
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Statistique> statistiques = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

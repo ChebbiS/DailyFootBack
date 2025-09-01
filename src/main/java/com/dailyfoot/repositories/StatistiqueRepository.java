@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface StatistiqueRepository extends JpaRepository<Statistique, Integer> {
     Optional<Statistique> findByPlayerId(int playerId);
+    Optional<Statistique> findById(int Id);
 }

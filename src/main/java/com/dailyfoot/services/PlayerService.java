@@ -6,9 +6,11 @@ import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerResponse;
 import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
+import com.dailyfoot.entities.Statistique;
 import com.dailyfoot.exceptions.PlayerAlreadyExistsException;
 import com.dailyfoot.repositories.AgentRepository;
 import com.dailyfoot.repositories.PlayerRepository;
+import com.dailyfoot.repositories.StatistiqueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,13 +27,15 @@ public class PlayerService {
     private final PlayerRepository playerRepository;
     private final AgentRepository agentRepository;
     private final MailService mailService;
+    private final StatistiqueRepository statistiqueRepository;
 
 
     @Autowired
-    public PlayerService(AgentRepository agentRepository, PlayerRepository playerRepository, MailService mailService) {
+    public PlayerService(StatistiqueRepository statistiqueRepository, AgentRepository agentRepository, PlayerRepository playerRepository, MailService mailService) {
         this.playerRepository = playerRepository;
         this.mailService = mailService;
         this.agentRepository = agentRepository;
+        this.statistiqueRepository = statistiqueRepository;
     }
 
     @Transactional
@@ -55,6 +59,18 @@ public class PlayerService {
         player.setAgent(foundAgent);
 
         Player savedPlayer = playerRepository.save(player);
+        Statistique stats = new Statistique(
+                savedPlayer,
+                "2025/2026",
+                0,
+                0,
+                0,
+                0.0,
+                0,
+                0,
+                0
+        );
+        statistiqueRepository.save(stats);
 
         try {
             String subject = "Bienvenue sur DailyFoot - Votre code d'accès";
