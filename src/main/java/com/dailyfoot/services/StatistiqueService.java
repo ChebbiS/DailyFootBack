@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 public class StatistiqueService {
@@ -40,34 +41,27 @@ public class StatistiqueService {
         return statistiqueRepository.findByPlayerId(PlayerId);
     }
 
-        public StatistiqueDTO updateFields(int id, Map<String, Object> updates) {
-            Statistique stat = statistiqueRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Statistiques inexistante")); // A capter dans les exceptions
+    public StatistiqueDTO updateFields(int id, Map<String, Object> updates) {
+        Statistique stat = statistiqueRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Statistiques inexistante")); // A capter dans les exceptions
 
-            if(updates.containsKey("matchsJoues"))
-                stat.setMatchsJoues((Integer) updates.get("matchsJoues"));
+        Map<String, Consumer<Object>> updatesMap = Map.of(
+                "matchsJoues", value -> stat.setMatchsJoues((Integer) value),
+                "buts", value -> stat.setButs((Integer) value),
+                "passesDecisives", value -> stat.setPassesDecisives((Integer) value),
+                "taille", value -> stat.setTaille(Double.parseDouble(value.toString())),
+                "poids", value -> stat.setPoids(Double.parseDouble(value.toString())),
+                "cartonsJaunes", value -> stat.setCartonsJaunes((Integer) value),
+                "cartonsRouges", value -> stat.setCartonsRouges((Integer) value)
+        );
 
-            if(updates.containsKey("buts"))
-                stat.setButs((Integer) updates.get("buts"));
+        updates.forEach((key, value) -> {
+            if (updatesMap.containsKey(key)) {
+                updatesMap.get(key).accept(value);
+            }
+        });
 
-            if(updates.containsKey("passesDecisives"))
-                stat.setPassesDecisives((Integer) updates.get("passesDecisives"));
-
-            if(updates.containsKey("taille"))
-                stat.setTaille(Double.parseDouble(updates.get("taille").toString()));
-
-            if(updates.containsKey("poids"))
-                stat.setPoids(Double.parseDouble(updates.get("poids").toString()));
-
-            if(updates.containsKey("cartonsJaunes"))
-                stat.setCartonsJaunes((Integer) updates.get("cartonsJaunes"));
-
-            if(updates.containsKey("cartonsRouges"))
-                stat.setCartonsRouges((Integer) updates.get("cartonsRouges"));
-
-            statistiqueRepository.save(stat);
-
-            return new StatistiqueDTO(stat);
-        }
+        statistiqueRepository.save(stat);
+        return new StatistiqueDTO(stat);
     }
-
+}

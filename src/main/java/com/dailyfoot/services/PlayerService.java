@@ -5,12 +5,16 @@ import com.dailyfoot.config.JwtUtil;
 import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerResponse;
 import com.dailyfoot.entities.*;
+import com.dailyfoot.exceptions.CannotDeleteStrangerPlayerException;
 import com.dailyfoot.exceptions.PlayerAlreadyExistsException;
+import com.dailyfoot.exceptions.PlayerNotFoundException;
 import com.dailyfoot.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -48,7 +52,6 @@ public class PlayerService {
         if (playerRepository.existsByEmail(request.getEmail())) {
             throw new PlayerAlreadyExistsException("Un joueur avec cet email existe déjà !");
         }
-
         Player player = new Player();
         player.setName(request.getName());
         player.setAge(request.getAge());
@@ -92,30 +95,6 @@ public class PlayerService {
         statistiqueRepository.save(stats);
 
         try {
-            String subject = "Bienvenue sur DailyFoot - Votre code d'accès";
-
-            String textPart = "Bonjour " + savedPlayer.getName() + ",\n\n"
-                    + "Bienvenue sur DailyFoot !\n"
-                    + "Voici votre code d'accès pour vous connecter : " + accessCode + "\n\n"
-                    + "Conservez-le précieusement et ne le partagez avec personne.\n\n"
-                    + "L'équipe DailyFoot";
-
-            String htmlPart = "<!DOCTYPE html>"
-                    + "<html lang='fr'>"
-                    + "<head><meta charset='UTF-8'><title>DailyFoot</title></head>"
-                    + "<body style='font-family:Arial,sans-serif; line-height:1.6;'>"
-                    + "<h2 style='color:#2E86C1;'>Bonjour " + savedPlayer.getName() + ",</h2>"
-                    + "<p>Bienvenue sur <strong>DailyFoot</strong> !</p>"
-                    + "<p>Voici votre code d'accès pour vous connecter :</p>"
-                    + "<p style='font-size:18px; font-weight:bold; color:#C0392B;'>" + accessCode + "</p>"
-                    + "<p>Conservez-le précieusement et ne le partagez avec personne.</p>"
-                    + "<hr style='border:none; border-top:1px solid #ccc;'/>"
-                    + "<p style='font-size:12px; color:#888;'>"
-                    + "Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email."
-                    + "</p>"
-                    + "<p style='font-size:12px; color:#888;'>L'équipe DailyFoot</p>"
-                    + "</body></html>";
-
             mailService.sendAccessCodeEmail(
                     savedPlayer.getEmail(),
                     savedPlayer.getName(),
@@ -126,8 +105,6 @@ public class PlayerService {
             System.err.println("Erreur lors de l'envoi de l'email : " + e.getMessage()); // a capter dans les exceptions
             e.printStackTrace();
         }
-
-
         return savedPlayer;
     }
 
@@ -161,8 +138,12 @@ public class PlayerService {
         return playerRepository.save(player);
     }
 
-    public void deletePlayer(Integer id) {
-        playerRepository.deleteById(id);
+    public void deletePlayer(Integer playerId, Integer agentId) {
+        Player player = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException("Joueur non trouvé"));
+        if (player.getAgent().getUser().getId() != agentId) {
+            throw new CannotDeleteStrangerPlayerException("Vous ne pouvez pas supprimer un joueur qui ne vous appartient pas !")
+        }
+        playerRepository.delete(player);
     }
 
     public Optional<Player> getPlayerByPlayerId(Integer playerId) {

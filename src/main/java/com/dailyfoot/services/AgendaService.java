@@ -50,10 +50,11 @@ public class AgendaService {
     public Optional<Agenda> getAgendaByOwnerType(OwnerType ownerType) {
         return agendaRepository.findByOwnerType(ownerType);
     }
+
     public List<Event> getAgentFullAgenda(int agentId) {
         List<Event> allEvents = new ArrayList<>(eventRepository.findByOwnerTypeAndOwnerId(Event.OwnerType.AGENT, agentId));
         List<Player> players = playerRepository.findByAgentId(agentId);
-        for(Player player : players) {
+        for (Player player : players) {
             List<Event> playerEvents = eventRepository.findByOwnerTypeAndOwnerId(Event.OwnerType.PLAYER, player.getId());
             allEvents.addAll(playerEvents);
         }
