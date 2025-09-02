@@ -1,16 +1,20 @@
 package com.dailyfoot.services;
 
 import com.dailyfoot.entities.Agent;
+import com.dailyfoot.entities.Event;
 import com.dailyfoot.repositories.AgentRepository;
+import com.dailyfoot.repositories.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class AgentService {
     private final AgentRepository agentRepository;
+
 
     @Autowired
     public AgentService(AgentRepository agentRepository) {

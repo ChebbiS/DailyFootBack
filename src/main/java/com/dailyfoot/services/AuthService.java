@@ -2,14 +2,15 @@ package com.dailyfoot.services;
 
 import com.dailyfoot.dto.LoginRequest;
 import com.dailyfoot.dto.RegisterRequest;
-import com.dailyfoot.entities.Agent;
-import com.dailyfoot.entities.Player;
-import com.dailyfoot.entities.User;
+import com.dailyfoot.entities.*;
+import com.dailyfoot.repositories.AgendaRepository;
+import com.dailyfoot.repositories.EventRepository;
 import com.dailyfoot.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -19,15 +20,20 @@ public class AuthService {
     private final PlayerService playerService;
     private final PlayerRepository playerRepository;
     private final AgentService agentService;
+    private final EventRepository eventRepository;
+    private final AgendaRepository agendaRepository;
 
     @Autowired
-    public AuthService(UserService userService, PlayerService playerService,
-                       PlayerRepository playerRepository, AgentService agentService) {
+    public AuthService(AgendaRepository agendaRepository, UserService userService, PlayerService playerService,
+                       PlayerRepository playerRepository, AgentService agentService,
+                       EventRepository eventRepository) {
         this.userService = userService;
         this.passwordEncoder = new BCryptPasswordEncoder();
         this.playerService = playerService;
         this.playerRepository = playerRepository;
         this.agentService = agentService;
+        this.eventRepository = eventRepository;
+        this.agendaRepository = agendaRepository;
     }
 
     public User register(RegisterRequest request) {
@@ -41,6 +47,23 @@ public class AuthService {
             Agent agent = new Agent();
             agent.setUser(savedUser);
             agentService.saveAgent(agent);
+
+            Agenda agenda = new Agenda();
+            agenda.setOwnerType(OwnerType.AGENT);
+            agenda.setOwnerId(savedUser.getId());
+            agenda.setColor("#000000");
+            Agenda savedAgenda = agendaRepository.save(agenda);
+
+            Event defaultEvent = new Event(
+                    "Agenda Agent",
+                    "Agenda",
+                    "AGENT",
+                    LocalDateTime.now(),
+                    LocalDateTime.now().plusHours(1),
+                    Event.OwnerType.AGENT,
+                    savedAgenda.getId()
+            );
+            eventRepository.save(defaultEvent);
         }
         return savedUser;
     }

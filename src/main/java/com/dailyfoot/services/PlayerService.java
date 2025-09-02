@@ -4,19 +4,16 @@ import com.dailyfoot.config.CustomUserDetails;
 import com.dailyfoot.config.JwtUtil;
 import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerResponse;
-import com.dailyfoot.entities.Agent;
-import com.dailyfoot.entities.Player;
-import com.dailyfoot.entities.Statistique;
+import com.dailyfoot.entities.*;
 import com.dailyfoot.exceptions.PlayerAlreadyExistsException;
-import com.dailyfoot.repositories.AgentRepository;
-import com.dailyfoot.repositories.PlayerRepository;
-import com.dailyfoot.repositories.StatistiqueRepository;
+import com.dailyfoot.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,14 +25,19 @@ public class PlayerService {
     private final AgentRepository agentRepository;
     private final MailService mailService;
     private final StatistiqueRepository statistiqueRepository;
+    private final EventRepository eventRepository;
+    private final AgendaRepository agendaRepository;
 
 
     @Autowired
-    public PlayerService(StatistiqueRepository statistiqueRepository, AgentRepository agentRepository, PlayerRepository playerRepository, MailService mailService) {
+    public PlayerService(AgendaRepository agendaRepository, StatistiqueRepository statistiqueRepository, AgentRepository agentRepository, PlayerRepository playerRepository, MailService mailService,
+                         EventRepository eventRepository) {
         this.playerRepository = playerRepository;
         this.mailService = mailService;
         this.agentRepository = agentRepository;
         this.statistiqueRepository = statistiqueRepository;
+        this.eventRepository = eventRepository;
+        this.agendaRepository = agendaRepository;
     }
 
     @Transactional
@@ -59,6 +61,23 @@ public class PlayerService {
         player.setAgent(foundAgent);
 
         Player savedPlayer = playerRepository.save(player);
+        Agenda agenda = new Agenda();
+        agenda.setOwnerType(OwnerType.PLAYER);
+        agenda.setColor("#FF5733");
+        agenda.setOwnerId(savedPlayer.getId());
+        agendaRepository.save(agenda);
+        Event defaultEvent = new Event(
+                "titre",
+                "Description",
+                "PLAYER",
+                LocalDateTime.now(),
+                LocalDateTime.now().plusHours(1),
+                Event.OwnerType.PLAYER,
+                savedPlayer.getId()
+        );
+        defaultEvent.setAgenda(agenda);
+        eventRepository.save(defaultEvent);
+
         Statistique stats = new Statistique(
                 savedPlayer,
                 "2025/2026",

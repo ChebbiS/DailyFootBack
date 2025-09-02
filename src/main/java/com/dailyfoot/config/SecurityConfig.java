@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/players/**").hasAnyRole("ADMIN", "AGENT")
-                .requestMatchers("/statistique/update/**").authenticated()
+                .requestMatchers("/agenda/**").hasAnyRole("ADMIN", "AGENT")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -9,17 +9,29 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    @ManyToOne
+    @JoinColumn(name = "agenda_id", unique = true)
+    private Agenda agenda;
     private String title;
     private String description;
-    private String type;
-
+    @Column(name = "date_heure_debut")
     private java.time.LocalDateTime dateHeureDebut;
+    @Column(name = "date_heure_fin")
     private java.time.LocalDateTime dateHeureFin;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
     private OwnerType ownerType;
+    @Column(name = "owner_id", nullable = false)
     private int ownerId;
+
+    public Agenda getAgenda() {
+        return agenda;
+    }
+
+    public void setAgenda(Agenda agenda) {
+        this.agenda = agenda;
+    }
 
     public enum OwnerType {
         AGENT, PLAYER
@@ -34,7 +46,6 @@ public class Event {
                  OwnerType ownerType, int ownerId) {
         this.title = title;
         this.description = description;
-        this.type = type;
         this.dateHeureDebut = dateHeureDebut;
         this.dateHeureFin = dateHeureFin;
         this.ownerType = ownerType;
@@ -63,14 +74,6 @@ public class Event {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public java.time.LocalDateTime getDateHeureDebut() {
@@ -104,4 +107,5 @@ public class Event {
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
     }
+
 }

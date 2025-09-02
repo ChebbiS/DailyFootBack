@@ -31,6 +31,7 @@ public class MailService {
 
     public void sendAccessCodeEmail(String toEmail, String toName, int accessCode) {
         try {
+
             String subject = "Bienvenue sur DailyFoot - Votre code d'accès";
 
             String textPart = "Bonjour " + toName + ",\n\n"
