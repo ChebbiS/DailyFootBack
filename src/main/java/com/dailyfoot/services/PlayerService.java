@@ -141,7 +141,7 @@ public class PlayerService {
     public void deletePlayer(Integer playerId, Integer agentId) {
         Player player = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException("Joueur non trouvé"));
         if (player.getAgent().getUser().getId() != agentId) {
-            throw new CannotDeleteStrangerPlayerException("Vous ne pouvez pas supprimer un joueur qui ne vous appartient pas !")
+            throw new CannotDeleteStrangerPlayerException("Vous ne pouvez pas supprimer un joueur qui ne vous appartient pas !");
         }
         playerRepository.delete(player);
     }
