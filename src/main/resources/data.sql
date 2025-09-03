@@ -7,8 +7,7 @@ DELETE FROM user;
 
 INSERT INTO user (id, name, email, password, role)
 VALUES
-(1, 'Young Crack', 'youngcrackfr@gmail.com',
- '$2a$10$DowJonesRkCzVpqkHj0bW6Ou0RmM0i3T6y6lHykjGnQYQ4s/x0pXyW', 'AGENT'),
+(1, 'Young Crack', 'youngcrackfr@gmail.com', '$2y$10$syAsesqkvLZLMQSjYVpeV.FFQbSFKWfP96CJVNruObUUiBPbSv5O.', 'AGENT'),
 (2, 'John Doe', 'johndoe@gmail.com',
  '$2a$10$DowJonesRkCzVpqkHj0bW6Ou0RmM0i3T6y6lHykjGnQYQ4s/x0pXyW', 'AGENT'),
 (3, 'Admin Root', 'admin@gmail.com',

@@ -34,7 +34,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterRequestResponse> register(@Valid @RequestBody RegisterRequest request) {
         User newUser = authService.register(request);
-        return ResponseEntity.ok(new RegisterRequestResponse("Votre compte a été avec succès !"));
+        return ResponseEntity.ok(new RegisterRequestResponse("Votre compte a été crée avec succès !"));
     }
 
     @PostMapping("/login")
@@ -43,7 +43,7 @@ public class AuthController {
         if (user == null) {
             return ResponseEntity.status(401).body(new LoginResponse("Identifiants invalides", null)); // A capter dans les exceptions
         }
-        String token = jwtUtil.generateToken(user.getEmail()); // email = username
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name()); // email = username
         return ResponseEntity.ok(new LoginResponse(user.getEmail(), token));
     }
 
@@ -58,13 +58,19 @@ public class AuthController {
         if (player == null) {
             return ResponseEntity.status(401).build(); // Gerer l'exception
         }
+        String token = jwtUtil.generateToken(
+                player.getEmail(),
+                "PLAYER"
+        );
         PlayerLoginResponse response = new PlayerLoginResponse(
                 player.getName(),
-                player.getClub(),
+                player.getPoste(),
                 player.getImage(),
-                player.getNationality(),
+                player.getClub(),
                 player.getAge(),
-                player.getPoste()
+                player.getNationality(),
+                token,
+                "PLAYER"
         );
         return ResponseEntity.ok(response);
     }
