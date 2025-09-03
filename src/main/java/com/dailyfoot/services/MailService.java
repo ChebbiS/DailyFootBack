@@ -5,6 +5,7 @@ import com.mailjet.client.MailjetRequest;
 import com.mailjet.client.MailjetResponse;
 import com.mailjet.client.errors.MailjetException;
 import com.mailjet.client.resource.Emailv31;
+import jakarta.annotation.PostConstruct;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,21 +13,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MailService {
+    @Value("${mailjet.from.email}")
+    private String fromEmail;
+    @Value("${mailjet.from.name}")
+    private String fromName;
+    @Value("${mailjet.api.key.public}")
+    private String apiKeyPublic;
+    @Value("${mailjet.api.key.private}")
+    private String apiKeyPrivate;
 
-    private final MailjetClient client;
-    private final String fromEmail;
-    private final String fromName;
+    private MailjetClient client;
 
-    public MailService(
-            @Value("${mailjet.api.key.public}") String apiKeyPublic,
-            @Value("${mailjet.api.key.private}") String apiKeyPrivate,
-            @Value("${mailjet.from.email}") String fromEmail,
-            @Value("${mailjet.from.name}") String fromName
-    )
-    {
+    @PostConstruct
+    public void init() {
         this.client = new MailjetClient(apiKeyPublic, apiKeyPrivate);
-        this.fromEmail = fromEmail;
-        this.fromName = fromName;
     }
 
     public void sendAccessCodeEmail(String toEmail, String toName, int accessCode) {
