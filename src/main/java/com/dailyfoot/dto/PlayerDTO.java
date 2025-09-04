@@ -1,23 +1,33 @@
 package com.dailyfoot.dto;
 
-public class PlayerLoginResponse {
+import com.dailyfoot.entities.Player;
+
+public class PlayerDTO {
     private String name;
     private String poste;
     private String image;
     private String club;
     private int age;
     private String nationality;
-    private String token;
-    private String role;
-    public PlayerLoginResponse(String name, String poste, String image, String club, int age, String nationality, String token, String role) {
+    private String agentId;
+
+    public PlayerDTO(String name, String poste, String image, String club, int age, String nationality) {
         this.name = name;
         this.poste = poste;
         this.image = image;
         this.club = club;
         this.age = age;
         this.nationality = nationality;
-        this.token = token;
-        this.role = role;
+    }
+
+    public PlayerDTO(Player player) {
+        this.name = player.getName();
+        this.poste = player.getPoste();
+        this.image = player.getImage();
+        this.club = player.getClub();
+        this.age = player.getAge();
+        this.nationality = player.getNationality();
+        this.agentId = player.getAgent().getUser().getName();
     }
 
     public String getName() {
@@ -66,21 +76,5 @@ public class PlayerLoginResponse {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }

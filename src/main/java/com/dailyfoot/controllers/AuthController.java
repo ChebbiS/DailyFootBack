@@ -32,19 +32,19 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterRequestResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterRequestDTO> register(@Valid @RequestBody RegisterRequest request) {
         User newUser = authService.register(request);
-        return ResponseEntity.ok(new RegisterRequestResponse("Votre compte a été crée avec succès !"));
+        return ResponseEntity.ok(new RegisterRequestDTO("Votre compte a été crée avec succès !"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<LoginDTO> login(@Valid @RequestBody LoginRequest request) {
         User user = authService.login(request);
         if (user == null) {
-            return ResponseEntity.status(401).body(new LoginResponse("Identifiants invalides", null)); // A capter dans les exceptions
+            return ResponseEntity.status(401).body(new LoginDTO("Identifiants invalides", null)); // A capter dans les exceptions
         }
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name()); // email = username
-        return ResponseEntity.ok(new LoginResponse(user.getEmail(), token));
+        return ResponseEntity.ok(new LoginDTO(user.getEmail(), token));
     }
 
     @PostMapping("/logout")
@@ -53,7 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/loginPlayer")
-    public ResponseEntity<PlayerLoginResponse> loginPlayer(@Valid @RequestBody LoginPlayerRequest request) {
+    public ResponseEntity<PlayerLoginDTO> loginPlayer(@Valid @RequestBody LoginPlayerRequest request) {
         Player player = authService.loginPlayer(request.getCodeAccess());
         if (player == null) {
             return ResponseEntity.status(401).build(); // Gerer l'exception
@@ -62,7 +62,7 @@ public class AuthController {
                 player.getEmail(),
                 "PLAYER"
         );
-        PlayerLoginResponse response = new PlayerLoginResponse(
+        PlayerLoginDTO response = new PlayerLoginDTO(
                 player.getName(),
                 player.getPoste(),
                 player.getImage(),

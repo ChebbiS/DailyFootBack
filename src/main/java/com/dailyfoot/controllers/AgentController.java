@@ -1,7 +1,7 @@
 package com.dailyfoot.controllers;
 
 import com.dailyfoot.dto.CreatePlayerRequest;
-import com.dailyfoot.dto.PlayerResponse;
+import com.dailyfoot.dto.PlayerDTO;
 import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.repositories.AgentRepository;
@@ -29,7 +29,7 @@ public class AgentController {
 
     @PostMapping("/addPlayer")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PlayerResponse> addPlayer(@Valid @RequestBody CreatePlayerRequest request, @RequestParam int agentId) {
+    public ResponseEntity<PlayerDTO> addPlayer(@Valid @RequestBody CreatePlayerRequest request, @RequestParam int agentId) {
         Optional<Agent> optionalAgent = agentRepository.findById(agentId);
         if (optionalAgent.isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -37,7 +37,7 @@ public class AgentController {
         Agent agent = optionalAgent.get();
         Player createdPlayer = playerService.createPlayer(agent.getUser().getId(), request);
 
-        return ResponseEntity.ok(new PlayerResponse(createdPlayer));
+        return ResponseEntity.ok(new PlayerDTO(createdPlayer));
     }
 
     @DeleteMapping("/deletePlayer")

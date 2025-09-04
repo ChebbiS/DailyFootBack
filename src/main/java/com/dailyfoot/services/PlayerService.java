@@ -3,7 +3,7 @@ package com.dailyfoot.services;
 import com.dailyfoot.config.CustomUserDetails;
 import com.dailyfoot.config.JwtUtil;
 import com.dailyfoot.dto.CreatePlayerRequest;
-import com.dailyfoot.dto.PlayerResponse;
+import com.dailyfoot.dto.PlayerDTO;
 import com.dailyfoot.entities.*;
 import com.dailyfoot.exceptions.CannotDeleteStrangerPlayerException;
 import com.dailyfoot.exceptions.PlayerAlreadyExistsException;
@@ -108,9 +108,9 @@ public class PlayerService {
         return savedPlayer;
     }
 
-    public List<PlayerResponse> getAllPlayers() {
+    public List<PlayerDTO> getAllPlayers() {
         return playerRepository.findAll().stream()
-                .map(player -> new PlayerResponse(
+                .map(player -> new PlayerDTO(
                         player.getName(),
                         player.getPoste(),
                         player.getImage(),
@@ -122,9 +122,9 @@ public class PlayerService {
     }
 
 
-    public Optional<PlayerResponse> getPlayerById(Integer id) {
+    public Optional<PlayerDTO> getPlayerById(Integer id) {
         return playerRepository.findById(id)
-                .map(player -> new PlayerResponse(
+                .map(player -> new PlayerDTO(
                         player.getName(),
                         player.getPoste(),
                         player.getImage(),

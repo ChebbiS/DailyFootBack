@@ -1,10 +1,10 @@
 package com.dailyfoot.dto;
 
-public class LoginResponse {
+public class LoginDTO {
     private String name;
     private String token;
 
-    public LoginResponse(String name, String token) {
+    public LoginDTO(String name, String token) {
         this.name = name;
         this.token = token;
     }
