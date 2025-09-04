@@ -1,5 +1,6 @@
 package com.dailyfoot.services;
 
+import com.dailyfoot.dto.UpdateUserDTO;
 import com.dailyfoot.entities.User;
 import com.dailyfoot.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,10 @@ public class UserService {
 
     public String encodePassword(String rawPassword){
         return passwordEncoder.encode(rawPassword);
+    }
+    public Optional<UpdateUserDTO> getUserDTOByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(user -> new UpdateUserDTO(user.getName(), user.getEmail()));
     }
 
 }

@@ -1,8 +1,14 @@
 package com.dailyfoot.dto;
 
+import jakarta.validation.constraints.Pattern;
+
 public class UpdateUserRequest {
     private String name;
     private String email;
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%?&])[A-Za-z\\d@$!%?&]{8,}$",
+            message = "Le mot de passe doit contenir au minimum 8 caractères, avec au moins une majuscule, une minuscule, un chiffre et un caractère spécial"
+    )
     private String password;
     private String confirmPassword;
 

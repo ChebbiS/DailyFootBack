@@ -34,7 +34,7 @@ public class PlayerController {
         return ResponseEntity.ok(new PlayerDTO(createdPlayer));
     }
 
-    @GetMapping("/ListOfPlayers")
+    @GetMapping("/listOfPlayers")
     public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
         List<PlayerDTO> players = playerService.getAllPlayers();
         return ResponseEntity.ok(players);

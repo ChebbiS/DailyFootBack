@@ -1,8 +1,10 @@
 package com.dailyfoot.controllers;
 
+import com.dailyfoot.dto.UpdateUserDTO;
 import com.dailyfoot.dto.UpdateUserRequest;
 import com.dailyfoot.entities.User;
 import com.dailyfoot.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,19 +20,20 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
+    public ResponseEntity<UpdateUserDTO> getCurrentUser(Authentication authentication) {
         if (authentication == null) return ResponseEntity.status(401).build();
 
         String email = authentication.getName();
-        Optional<User> userOpt = userService.getUserByEmail(email);
+        Optional<UpdateUserDTO> userOpt = userService.getUserDTOByEmail(email);
 
         return userOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 
+
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUserRequest request, Authentication authentication) {
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateUserRequest request, Authentication authentication) {
 
         if (authentication == null) {
             return ResponseEntity.status(401).body("Token invalide");
