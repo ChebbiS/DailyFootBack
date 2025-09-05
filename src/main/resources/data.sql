@@ -20,8 +20,8 @@ VALUES
 
 INSERT INTO player (id, age, name, agent_id, email, access_code, club, image, nationality, poste)
 VALUES
-(1, 17, 'Mohamed Chebbi', 1, 'mohamedchebbi@gmail.com', '123456', 'FC Barcelona', 'https://i.imgur.com/123456.jpg', 'France', 'Goalkeeper'),
-(2, 18, 'Yassine Lomet', 1, 'yassinelomet@gmail.com', '654321', 'Stade Rennais', 'https://i.imgur.com/abcdef.jpg', 'France', 'Midfielder'),
+(1, 17, 'Mohamed Chebbi', 1, 'mohamedchebbi@gmail.com', '123456', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/22a4f488807674ef24b4855146244b64.png?twic=v1/focus=226x193/cover=380x296', 'France', 'Défenseur'),
+(2, 18, 'Ruben Lomet', 1, 'rubenlomet@gmail.com', '654321', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/8118f1bdb97e01af3897bdb707818dc8.png?twic=v1/focus=237x151/cover=380x296', 'France', 'Défenseur'),
 (3, 19, 'Karim Akabou', 2, 'karimakabou@gmail.com', '111222', 'PSG', 'https://i.imgur.com/ghijkl.jpg', 'Algeria', 'Forward');
 
 INSERT INTO statistique (id, player_id, saison, matchs_joues, buts, passes_decisives, cartons_jaunes, cartons_rouges, taille, poids)

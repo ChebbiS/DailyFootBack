@@ -4,6 +4,7 @@ import com.dailyfoot.config.CustomUserDetails;
 import com.dailyfoot.config.JwtUtil;
 import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerDTO;
+import com.dailyfoot.dto.StatistiqueDTO;
 import com.dailyfoot.entities.*;
 import com.dailyfoot.exceptions.CannotDeleteStrangerPlayerException;
 import com.dailyfoot.exceptions.PlayerAlreadyExistsException;

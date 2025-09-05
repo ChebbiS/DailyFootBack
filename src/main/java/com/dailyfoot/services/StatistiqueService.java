@@ -68,4 +68,8 @@ public class StatistiqueService {
         statistiqueRepository.save(stat);
         return new StatistiqueDTO(stat);
     }
+    public Optional<StatistiqueDTO> getStatsByPlayerId(Integer playerId) {
+        return statistiqueRepository.findByPlayerId(playerId)
+                .map(StatistiqueDTO::new); // adapter selon ton DTO
+    }
 }

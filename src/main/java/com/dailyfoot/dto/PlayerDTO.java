@@ -3,6 +3,7 @@ package com.dailyfoot.dto;
 import com.dailyfoot.entities.Player;
 
 public class PlayerDTO {
+    private int id;
     private String name;
     private String poste;
     private String image;
@@ -21,6 +22,7 @@ public class PlayerDTO {
     }
 
     public PlayerDTO(Player player) {
+        this.id = player.getId();
         this.name = player.getName();
         this.poste = player.getPoste();
         this.image = player.getImage();
@@ -28,6 +30,22 @@ public class PlayerDTO {
         this.age = player.getAge();
         this.nationality = player.getNationality();
         this.agentId = player.getAgent().getUser().getName();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getAgentId() {
+        return agentId;
+    }
+
+    public void setAgentId(String agentId) {
+        this.agentId = agentId;
     }
 
     public String getName() {
