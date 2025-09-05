@@ -21,8 +21,11 @@ public class StatistiqueService {
         this.statistiqueRepository = statistiqueRepository;
     }
 
-    public List<Statistique> getAllStatistiques() {
-        return statistiqueRepository.findAll();
+    public List<StatistiqueDTO> getAllStatistiques() {
+        return statistiqueRepository.findAll()
+        .stream()
+        .map(statistics -> new StatistiqueDTO(statistics))
+        .toList();
     }
 
     public Optional<Statistique> getStatistiqueById(Integer id) {
@@ -58,7 +61,8 @@ public class StatistiqueService {
         updates.forEach((key, value) -> {
             if (updatesMap.containsKey(key)) {
                 updatesMap.get(key).accept(value);
-            }
+            } //TO DO : refacto ça en plus simple ligne 44 à 67
+            // ctrl + MAJ + F
         });
 
         statistiqueRepository.save(stat);

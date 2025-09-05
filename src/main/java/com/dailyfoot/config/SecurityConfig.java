@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/auth/**","/statistique/**").permitAll()
                 .requestMatchers("/players/**","/agenda/**","/agent/**").hasAnyRole("ADMIN", "AGENT")
                 .requestMatchers("/agenda/**").hasRole("PLAYER")
                 .requestMatchers("/users/me").authenticated()
