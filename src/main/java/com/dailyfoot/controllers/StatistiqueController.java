@@ -28,7 +28,7 @@ public class StatistiqueController {
         List<StatistiqueDTO> stats = statistiqueService.getAllStatistiques();
         return ResponseEntity.ok(stats);
     }
-
+    
 
     @PatchMapping("/update/{id}") //https://localhost:8080/statistique/update/1
     public ResponseEntity<StatistiqueDTO> updateStatistiques(
