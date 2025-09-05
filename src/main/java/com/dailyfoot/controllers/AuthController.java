@@ -19,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
     @Autowired
     private AuthenticationManager authenticationManager;
     private final AuthService authService;

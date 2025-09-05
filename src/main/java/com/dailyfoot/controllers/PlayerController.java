@@ -1,5 +1,6 @@
 package com.dailyfoot.controllers;
 
+
 import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerDTO;
 import com.dailyfoot.entities.Player;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/players")
@@ -45,5 +47,6 @@ public class PlayerController {
         Optional<PlayerDTO> player = playerService.getPlayerById(id);
         return player.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build()); // Capter l'exception si le player n'existe pas
+
     }
 }
