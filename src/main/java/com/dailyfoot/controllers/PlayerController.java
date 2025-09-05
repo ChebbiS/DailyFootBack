@@ -3,9 +3,11 @@ package com.dailyfoot.controllers;
 
 import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerDTO;
+import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.repositories.AgentRepository;
 import com.dailyfoot.services.PlayerService;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,4 +51,11 @@ public class PlayerController {
                 .orElseGet(() -> ResponseEntity.notFound().build()); // Capter l'exception si le player n'existe pas
 
     }
+    @GetMapping("/my")
+    public ResponseEntity<List<PlayerDTO>> getMyPlayers() {
+        Agent currentAgent = playerService.getCurrentAgent();
+        List<PlayerDTO> players = playerService.getPlayersByAgent(currentAgent);
+        return ResponseEntity.ok(players);
+    }
+
 }

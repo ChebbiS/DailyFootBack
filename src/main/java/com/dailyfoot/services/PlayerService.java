@@ -179,4 +179,10 @@ public class PlayerService {
         return createPlayer(agent.getUser().getId(), request);
     }
 
+    public List<PlayerDTO> getPlayersByAgent(Agent agent) {
+        List<Player> players = playerRepository.findByAgentId(agent.getId());
+        return players.stream().map(PlayerDTO::new).toList();
+    }
+
+
 }
