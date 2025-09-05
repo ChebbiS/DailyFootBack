@@ -1,5 +1,11 @@
 package com.dailyfoot.repositories;
+
+import com.dailyfoot.entities.Agent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AgentRepository extends JpaRepository<Agent, Long> {
+import java.util.Optional;
+
+public interface AgentRepository extends JpaRepository<Agent, Integer> {
+    Optional<Agent> findByUserId(Integer userId);
+
 }
