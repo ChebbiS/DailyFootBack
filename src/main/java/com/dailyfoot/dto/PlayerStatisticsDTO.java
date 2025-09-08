@@ -1,14 +1,10 @@
 package com.dailyfoot.dto;
 
-import com.dailyfoot.entities.Player;
-
-import java.util.List;
-
 public class PlayerStatisticsDTO {
 
-    private PlayerDTO player; // Infos du joueur
-    private StatistiqueDTO statistics; // Stats
-     // Optionnel, si tu veux les matchs
+    private PlayerDTO player;
+    private StatistiqueDTO statistics;
+
 
     public PlayerStatisticsDTO(PlayerDTO player, StatistiqueDTO statistics) {
         this.player = player;
@@ -16,12 +12,22 @@ public class PlayerStatisticsDTO {
 
     }
 
-    // Getters et setters
-    public PlayerDTO getPlayer() { return player; }
-    public void setPlayer(PlayerDTO player) { this.player = player; }
 
-    public StatistiqueDTO getStatistics() { return statistics; }
-    public void setStatistics(StatistiqueDTO statistics) { this.statistics = statistics; }
+    public PlayerDTO getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(PlayerDTO player) {
+        this.player = player;
+    }
+
+    public StatistiqueDTO getStatistics() {
+        return statistics;
+    }
+
+    public void setStatistics(StatistiqueDTO statistics) {
+        this.statistics = statistics;
+    }
 
 
 }

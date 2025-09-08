@@ -70,6 +70,6 @@ public class StatistiqueService {
     }
     public Optional<StatistiqueDTO> getStatsByPlayerId(Integer playerId) {
         return statistiqueRepository.findByPlayerId(playerId)
-                .map(StatistiqueDTO::new); // adapter selon ton DTO
+                .map(StatistiqueDTO::new);
     }
 }
