@@ -29,10 +29,9 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String generateToken(int id, String username, String role) {
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim("id", id)
                 .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
@@ -55,9 +54,6 @@ public class JwtUtil {
 
     public String extractRole(String token) {
         return extractAllClaims(token).get("role", String.class);
-    }
-    public Integer extractId(String token) {
-        return extractAllClaims(token).get("id", Integer.class);
     }
 
     private Claims extractAllClaims(String token) {

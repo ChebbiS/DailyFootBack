@@ -44,7 +44,7 @@ public class AuthController {
         if (user == null) {
             return ResponseEntity.status(401).body(new LoginDTO("Identifiants invalides", null)); // A capter dans les exceptions
         }
-        String token = jwtUtil.generateToken(user.getId(), user.getEmail(), user.getRole().name()); // email = username
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name()); // email = username
         return ResponseEntity.ok(new LoginDTO(user.getEmail(), token));
     }
 
@@ -60,7 +60,6 @@ public class AuthController {
             return ResponseEntity.status(401).build(); // Gerer l'exception
         }
         String token = jwtUtil.generateToken(
-                player.getId(),
                 player.getEmail(),
                 "PLAYER"
         );

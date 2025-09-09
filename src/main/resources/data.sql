@@ -1,4 +1,4 @@
-DELETE FROM statistique;
+DELETE FROM statistic;
 DELETE FROM player;
 DELETE FROM agent;
 DELETE FROM agenda;
@@ -24,7 +24,18 @@ VALUES
 (2, 18, 'Ruben Lomet', 1, 'rubenlomet@gmail.com', '654321', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/8118f1bdb97e01af3897bdb707818dc8.png?twic=v1/focus=237x151/cover=380x296', 'France', 'Défenseur'),
 (3, 19, 'Karim Akabou', 2, 'karimakabou@gmail.com', '111222', 'PSG', 'https://i.imgur.com/ghijkl.jpg', 'Algeria', 'Forward');
 
-INSERT INTO statistique (id, player_id, saison, matchs_joues, buts, passes_decisives, cartons_jaunes, cartons_rouges, taille, poids)
+INSERT INTO statistic (
+                          id,
+                          player_id,
+                          season,
+                          matches_played,
+                          goals,
+                          assists,
+                          yellow_cards,
+                          red_cards,
+                          height,
+                          weight
+                      )
 VALUES
 (1, 1, '2023/2024', 20, 0, 0, 1, 0, 185, 75),
 (2, 2, '2023/2024', 25, 4, 7, 3, 0, 178, 70),

@@ -9,7 +9,7 @@ import java.util.List;
 @Table(name = "player")
 public class Player {
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Statistique> statistiques = new ArrayList<>();
+    private List<Statistic> statistics = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

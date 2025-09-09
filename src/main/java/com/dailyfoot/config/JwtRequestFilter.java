@@ -42,7 +42,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             try {
                 String role = jwtUtil.extractRole(jwt);
-                Integer id = jwtUtil.extractId(jwt);
 
                 if ("AGENT".equals(role)) {
                     String username = jwtUtil.extractUsername(jwt);
@@ -56,11 +55,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                             SecurityContextHolder.getContext().setAuthentication(authToken);
                         }
                     }
-                } else if ("PLAYER".equals(role)) {
-                    // Pour les joueurs, on ne fait pas passer par UserDetailsService
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(id, null, null);
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
 
             } catch (Exception e) {

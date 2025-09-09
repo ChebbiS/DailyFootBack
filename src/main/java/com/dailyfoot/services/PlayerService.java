@@ -4,18 +4,15 @@ import com.dailyfoot.config.CustomUserDetails;
 import com.dailyfoot.config.JwtUtil;
 import com.dailyfoot.dto.CreatePlayerRequest;
 import com.dailyfoot.dto.PlayerDTO;
-import com.dailyfoot.dto.StatistiqueDTO;
 import com.dailyfoot.entities.*;
 import com.dailyfoot.exceptions.CannotDeleteStrangerPlayerException;
 import com.dailyfoot.exceptions.PlayerAlreadyExistsException;
 import com.dailyfoot.exceptions.PlayerNotFoundException;
 import com.dailyfoot.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -29,18 +26,18 @@ public class PlayerService {
     private final PlayerRepository playerRepository;
     private final AgentRepository agentRepository;
     private final MailService mailService;
-    private final StatistiqueRepository statistiqueRepository;
+    private final StatisticRepository statisticRepository;
     private final EventRepository eventRepository;
     private final AgendaRepository agendaRepository;
 
 
     @Autowired
-    public PlayerService(AgendaRepository agendaRepository, StatistiqueRepository statistiqueRepository, AgentRepository agentRepository, PlayerRepository playerRepository, MailService mailService,
+    public PlayerService(AgendaRepository agendaRepository, StatisticRepository statisticRepository, AgentRepository agentRepository, PlayerRepository playerRepository, MailService mailService,
                          EventRepository eventRepository) {
         this.playerRepository = playerRepository;
         this.mailService = mailService;
         this.agentRepository = agentRepository;
-        this.statistiqueRepository = statistiqueRepository;
+        this.statisticRepository = statisticRepository;
         this.eventRepository = eventRepository;
         this.agendaRepository = agendaRepository;
     }
@@ -82,7 +79,7 @@ public class PlayerService {
         defaultEvent.setAgenda(agenda);
         eventRepository.save(defaultEvent);
 
-        Statistique stats = new Statistique(
+        Statistic stats = new Statistic(
                 savedPlayer,
                 "2025/2026",
                 0,
@@ -93,7 +90,7 @@ public class PlayerService {
                 0,
                 0
         );
-        statistiqueRepository.save(stats);
+        statisticRepository.save(stats);
 
         try {
             mailService.sendAccessCodeEmail(
