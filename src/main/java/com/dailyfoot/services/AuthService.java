@@ -3,10 +3,12 @@ package com.dailyfoot.services;
 import com.dailyfoot.dto.LoginRequest;
 import com.dailyfoot.dto.RegisterRequest;
 import com.dailyfoot.entities.*;
+import com.dailyfoot.exceptions.AgentNotFoundException;
 import com.dailyfoot.repositories.AgendaRepository;
 import com.dailyfoot.repositories.EventRepository;
 import com.dailyfoot.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +57,7 @@ public class AuthService {
             player.setEmail(request.getEmail());
 
             Agent agent = agentService.getAgentById(agentId)
-                    .orElseThrow(() -> new IllegalArgumentException("Agent not found with id: " + agentId));
+                    .orElseThrow(() -> new AgentNotFoundException("Agent not found with id: " + agentId));
             player.setAgent(agent);
 
             playerService.savePlayer(player);
@@ -65,20 +67,14 @@ public class AuthService {
     }
 
     public User login(LoginRequest request) {
-        Optional<User> userOpt = userService.getUserByEmail(request.getEmail());
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                return user;
-            }
+        User user = userService.getUserByEmail(request.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + request.getEmail()));
+        if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return user;
         }
         return null;
     }
 
-    public Player loginPlayer(int accessCode) {
-        Optional<Player> playerOpt = playerService.getPlayerByAccessCode(accessCode);
-        return playerOpt.orElse(null);
-    }
 
     private User saveUser(RegisterRequest request, User.Role role) {
         User user = new User();

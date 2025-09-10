@@ -32,14 +32,13 @@ public class PlayerController {
         this.agentRepository = agentRepository;
     }
 
-    @PostMapping("/addPlayer")
-    @PreAuthorize("hasRole('AGENT', 'ADMIN')")
+    @PostMapping
     public ResponseEntity<PlayerDTO> createPlayer(@RequestBody CreatePlayerRequest request) {
         Player createdPlayer = playerService.createPlayer(request);
         return ResponseEntity.ok(new PlayerDTO(createdPlayer));
     }
 
-    @GetMapping("/listOfPlayers")
+    @GetMapping
     public ResponseEntity<List<PlayerDTO>> getAllPlayers() {
         List<PlayerDTO> players = playerService.getAllPlayers();
         return ResponseEntity.ok(players);
@@ -52,14 +51,17 @@ public class PlayerController {
                 .orElseGet(() -> ResponseEntity.notFound().build()); // Capter l'exception si le player n'existe pas
 
     }
-    @GetMapping("/my")
+
+    // TODO : restreindre ça à l'agent connecté
+    @GetMapping("/my-players")
     public ResponseEntity<List<PlayerDTO>> getMyPlayers() {
         Agent currentAgent = playerService.getCurrentAgent();
         List<PlayerDTO> players = playerService.getPlayersByAgent(currentAgent);
         return ResponseEntity.ok(players);
     }
+
+    // TODO : à revoir
     @GetMapping("/me")
-    @PreAuthorize("hasAuthority('PLAYER')")
     public ResponseEntity<PlayerDTO> getMyProfile(@AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
         // userDetails.getUsername() renvoie normalement l'email du joueur connecté
         Optional<PlayerDTO> player = playerService.getPlayerByEmail(userDetails.getUsername());

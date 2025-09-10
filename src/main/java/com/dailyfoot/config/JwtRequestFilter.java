@@ -32,42 +32,55 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // Ignorer les endpoints d'authentification
-        if (path.startsWith("/auth/")) {
+        if (isAuthEndpoint(path)) {
             chain.doFilter(request, response);
             return;
         }
 
-        final String authorizationHeader = request.getHeader("Authorization");
-        String jwt = null;
+        String AUTH_HEADER_KEY = "Authorization";
+        String AUTH_HEADER_PREFIX = "Bearer ";
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            try {
-                String role = jwtUtil.extractRole(jwt); // ex: "PLAYER" ou "AGENT"
-                String username = jwtUtil.extractUsername(jwt);
+        final String authorizationHeader = request.getHeader(AUTH_HEADER_KEY);
 
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                    
-                    if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
-                        // Créer les autorités avec le préfixe ROLE_ pour Spring
-                        List<SimpleGrantedAuthority> authorities = List.of(
-                                new SimpleGrantedAuthority("ROLE_" + role)
-                        );
+        if (authorizationHeader == null || !authorizationHeader.startsWith(AUTH_HEADER_PREFIX)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-                        UsernamePasswordAuthenticationToken authToken =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
-                    }
-                }
+        String jwt = authorizationHeader.substring(7);
 
-            } catch (Exception e) {
-                // Token invalide : laisser passer sans authentification
+        try {
+            String role = jwtUtil.extractRole(jwt); // ex: "PLAYER" ou "AGENT"
+            String username = jwtUtil.extractUsername(jwt);
+
+            if (username == null || SecurityContextHolder.getContext().getAuthentication() != null) {
+                chain.doFilter(request, response);
+                return;
             }
+
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
+                // Créer les autorités avec le préfixe ROLE_ pour Spring
+                List<SimpleGrantedAuthority> authorities = List.of(
+                        new SimpleGrantedAuthority("ROLE_" + role)
+                );
+
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+
+        } catch (Exception e) {
+            // TODO : handle diff cas d'erreurs du JWT (expired, malformed, etc)
+            throw new RuntimeException("JWT Token is invalid", e);
         }
 
         chain.doFilter(request, response);
     }
+
+    private boolean isAuthEndpoint(String path) {
+        return path.startsWith("/auth/");
+    }
+
 }

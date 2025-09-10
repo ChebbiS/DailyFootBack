@@ -19,15 +19,13 @@ public class AuthController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-    private final AuthService authService;
+
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, AuthService authService) {
-        this.authService = authService;
-        this.authenticationManager = authenticationManager;
-    }
+    private  AuthService authService;
+
 
     @PostMapping("/register/agent")
     public ResponseEntity<RegisterRequestDTO> registerAgent(@Valid @RequestBody RegisterRequest request) {
@@ -44,38 +42,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginDTO> login(@Valid @RequestBody LoginRequest request) {
         User user = authService.login(request);
-        if (user == null) {
-            return ResponseEntity.status(401).body(new LoginDTO("Identifiants invalides", null)); // A capter dans les exceptions
-        }
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name()); // email = username
         return ResponseEntity.ok(new LoginDTO(user.getEmail(), token));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout() {
-        return ResponseEntity.ok(Map.of("message", "logout successful"));
-    }
 
-    @PostMapping("/loginPlayer")
-    public ResponseEntity<PlayerLoginDTO> loginPlayer(@Valid @RequestBody LoginPlayerRequest request) {
-        Player player = authService.loginPlayer(request.getCodeAccess());
-        if (player == null) {
-            return ResponseEntity.status(401).build(); // Gerer l'exception
-        }
-        String token = jwtUtil.generateToken(
-                player.getEmail(),
-                "PLAYER"
-        );
-        PlayerLoginDTO response = new PlayerLoginDTO(
-                player.getName(),
-                player.getPoste(),
-                player.getImage(),
-                player.getClub(),
-                player.getAge(),
-                player.getNationality(),
-                token,
-                "PLAYER"
-        );
-        return ResponseEntity.ok(response);
-    }
 }
