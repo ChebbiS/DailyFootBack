@@ -5,6 +5,8 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -24,6 +26,13 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleCannotDeleteStrangerPlayer(CannotDeleteStrangerPlayerException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
         problemDetail.setTitle("Vous ne pouvez pas supprimer un joueur qui ne vous appartient pas !");
+        return problemDetail;
+    }
+    // TODO : refacto
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ProblemDetail handle(SQLIntegrityConstraintViolationException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("Hélas bb revois tes credentials");
         return problemDetail;
     }
 }

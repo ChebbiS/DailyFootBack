@@ -8,27 +8,33 @@ import java.util.List;
 @Entity
 @Table(name = "player")
 public class Player {
-    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Statistic> statistics = new ArrayList<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "agent_id", nullable = false)
-    private Agent agent;
     private String name;
     private int age;
     private String nationality;
     private String poste;
     private String club;
-    @Column(unique = true, nullable = false)
-    private String email;
     private String image;
 
+    @Column(unique = true, nullable = false)
+    private String email;
     @Column(name = "access_code", unique = true, nullable = false)
     private int accessCode;
+
+    @ManyToOne
+    @JoinColumn(name = "agent_id", nullable = false)
+    private Agent agent;
+
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Statistic> statistics = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Player() {
     }
@@ -124,5 +130,13 @@ public class Player {
 
     public void setAccessCode(int accessCode) {
         this.accessCode = accessCode;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

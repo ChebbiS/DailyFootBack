@@ -9,10 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -32,9 +29,15 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<RegisterRequestDTO> register(@Valid @RequestBody RegisterRequest request) {
-        User newUser = authService.register(request);
+    @PostMapping("/register/agent")
+    public ResponseEntity<RegisterRequestDTO> registerAgent(@Valid @RequestBody RegisterRequest request) {
+        authService.register(request, User.Role.AGENT);
+        return ResponseEntity.ok(new RegisterRequestDTO("Votre compte a été crée avec succès !"));
+    }
+
+    @PostMapping("/register/player/{agentId}")
+    public ResponseEntity<RegisterRequestDTO> registerPlayer(@Valid @RequestBody RegisterRequest request, @PathVariable Integer agentId) {
+        authService.register(request, User.Role.PLAYER, agentId);
         return ResponseEntity.ok(new RegisterRequestDTO("Votre compte a été crée avec succès !"));
     }
 
