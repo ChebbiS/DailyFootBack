@@ -1,16 +1,14 @@
 package com.dailyfoot.controllers;
 
 
-import com.dailyfoot.dto.CreatePlayerRequest;
+import com.dailyfoot.dto.CreatePlayerDTO;
 import com.dailyfoot.dto.PlayerDTO;
 import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.repositories.AgentRepository;
 import com.dailyfoot.services.PlayerService;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +31,7 @@ public class PlayerController {
     }
 
     @PostMapping
-    public ResponseEntity<PlayerDTO> createPlayer(@RequestBody CreatePlayerRequest request) {
+    public ResponseEntity<PlayerDTO> createPlayer(@RequestBody CreatePlayerDTO request) {
         Player createdPlayer = playerService.createPlayer(request);
         return ResponseEntity.ok(new PlayerDTO(createdPlayer));
     }

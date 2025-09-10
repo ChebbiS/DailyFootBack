@@ -9,7 +9,7 @@ DELETE FROM user;
 -- Insert users first (no dependencies)
 INSERT INTO user (id, name, email, password, role)
 VALUES
-(1, 'Young Crack', 'youngcrackfr@gmail.com', '$2y$10$syAsesqkvLZLMQSjYVpeV.FFQbSFKWfP96CJVNruObUUiBPbSv5O.', 'PLAYER'),
+(1, 'Young Crack', 'youngcrackfr@gmail.com', '$2y$10$syAsesqkvLZLMQSjYVpeV.FFQbSFKWfP96CJVNruObUUiBPbSv5O.', 'AGENT'),
 (2, 'John Doe', 'johndoe@gmail.com', '$2a$10$DowJonesRkCzVpqkHj0bW6Ou0RmM0i3T6y6lHykjGnQYQ4s/x0pXyW', 'AGENT'),
 (3, 'Admin Root', 'admin@gmail.com', '$2a$10$DowJonesRkCzVpqkHj0bW6Ou0RmM0i3T6y6lHykjGnQYQ4s/x0pXyW', 'ADMIN');
 
@@ -19,9 +19,9 @@ VALUES
 (1, 2);
 
 -- Insert player (depends on user and agent)
-INSERT INTO player (id, user_id, age, name, agent_id, email, access_code, club, image, nationality, poste)
+INSERT INTO player (id, user_id, age, name, agent_id, email, club, image, nationality, poste)
 VALUES
-(1, 1, 17, 'Mohamed Chebbi', 1, 'mohamedchebbi@gmail.com', '123456', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/22a4f488807674ef24b4855146244b64.png?twic=v1/focus=226x193/cover=380x296', 'France', 'Défenseur');
+(1, 1, 17, 'Mohamed Chebbi', 1, 'mohamedchebbi@gmail.com', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/22a4f488807674ef24b4855146244b64.png?twic=v1/focus=226x193/cover=380x296', 'France', 'Défenseur');
 
 -- Insert statistics (depends on player)
 INSERT INTO statistic (

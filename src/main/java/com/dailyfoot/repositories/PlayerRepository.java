@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PlayerRepository extends JpaRepository<Player, Integer> {
-    Optional<Player> findByAccessCode(int accessCode);
     List<Player> findByAgentId(int agentId);
     Optional<Player> findByEmail(String email);
     boolean existsByEmail(String email);

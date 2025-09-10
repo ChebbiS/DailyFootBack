@@ -2,7 +2,7 @@ package com.dailyfoot.dto;
 
 import jakarta.validation.constraints.Pattern;
 
-public class UpdateUserRequest {
+public class UpdateUserRequestDTO {
     private String name;
     private String email;
     @Pattern(

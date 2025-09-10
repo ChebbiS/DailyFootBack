@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public class RegisterRequest {
+public class RegisterDTO {
     @Email
     @NotBlank(message = "Un Email est obligatoire")
     private String email;
@@ -21,10 +21,10 @@ public class RegisterRequest {
     private String name;
 
 
-    public RegisterRequest() {
+    public RegisterDTO() {
     }
 
-    public RegisterRequest(String email, String password, String name) {
+    public RegisterDTO(String email, String password, String name) {
         this.email = email;
         this.password = password;
         this.name = name;

@@ -22,8 +22,6 @@ public class Player {
 
     @Column(unique = true, nullable = false)
     private String email;
-    @Column(name = "access_code", unique = true, nullable = false)
-    private int accessCode;
 
     @ManyToOne
     @JoinColumn(name = "agent_id", nullable = false)
@@ -32,7 +30,7 @@ public class Player {
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Statistic> statistics = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -40,7 +38,7 @@ public class Player {
     }
 
     public Player(Agent agent, int playerId, String name, int age, String nationality,
-                  String poste, String club, String email, String image, int accessCode) {
+                  String poste, String club, String email, String image) {
         this.agent = agent;
         this.name = name;
         this.age = age;
@@ -49,7 +47,6 @@ public class Player {
         this.club = club;
         this.email = email;
         this.image = image;
-        this.accessCode = accessCode;
     }
 
     public int getId() {
@@ -122,14 +119,6 @@ public class Player {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public int getAccessCode() {
-        return accessCode;
-    }
-
-    public void setAccessCode(int accessCode) {
-        this.accessCode = accessCode;
     }
 
     public User getUser() {

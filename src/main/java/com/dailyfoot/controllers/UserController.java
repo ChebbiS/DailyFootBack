@@ -1,7 +1,7 @@
 package com.dailyfoot.controllers;
 
 import com.dailyfoot.dto.UpdateUserDTO;
-import com.dailyfoot.dto.UpdateUserRequest;
+import com.dailyfoot.dto.UpdateUserRequestDTO;
 import com.dailyfoot.entities.User;
 import com.dailyfoot.services.UserService;
 import jakarta.validation.Valid;
@@ -33,7 +33,7 @@ public class UserController {
 
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateUserRequest request, Authentication authentication) {
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UpdateUserRequestDTO request, Authentication authentication) {
 
         if (authentication == null) {
             return ResponseEntity.status(401).body("Token invalide");

@@ -1,7 +1,7 @@
 package com.dailyfoot.services;
 
-import com.dailyfoot.dto.LoginRequest;
-import com.dailyfoot.dto.RegisterRequest;
+import com.dailyfoot.dto.LoginRequestDTO;
+import com.dailyfoot.dto.RegisterDTO;
 import com.dailyfoot.entities.*;
 import com.dailyfoot.exceptions.AgentNotFoundException;
 import com.dailyfoot.repositories.AgendaRepository;
@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class AuthService {
@@ -38,7 +37,7 @@ public class AuthService {
         this.agendaRepository = agendaRepository;
     }
 
-    public User register(RegisterRequest request, User.Role role) {
+    public User register(RegisterDTO request, User.Role role) {
         User savedUser = this.saveUser(request, role);
 
             Agent agent = new Agent();
@@ -49,7 +48,7 @@ public class AuthService {
         return savedUser;
     }
 
-    public User register(RegisterRequest request, User.Role role, Integer agentId) {
+    public User register(RegisterDTO request, User.Role role, Integer agentId) {
         User savedUser = this.saveUser(request, role);
 
             Player player = new Player();
@@ -66,7 +65,7 @@ public class AuthService {
         return savedUser;
     }
 
-    public User login(LoginRequest request) {
+    public User login(LoginRequestDTO request) {
         User user = userService.getUserByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + request.getEmail()));
         if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -76,7 +75,7 @@ public class AuthService {
     }
 
 
-    private User saveUser(RegisterRequest request, User.Role role) {
+    private User saveUser(RegisterDTO request, User.Role role) {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
