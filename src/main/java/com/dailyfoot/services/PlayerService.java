@@ -182,5 +182,8 @@ public class PlayerService {
         return players.stream().map(PlayerDTO::new).toList();
     }
 
-
+    public Optional<PlayerDTO> getPlayerByEmail(String email) {
+        Optional<Player> player = playerRepository.findByEmail(email);
+        return player.map(PlayerDTO::new);
+    }
 }

@@ -29,9 +29,10 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .requestMatchers("/auth/**","/statistique/**").permitAll()
-                .requestMatchers("/players/**","/agenda/**","/agent/**").hasAnyRole("ADMIN", "AGENT")
-                .requestMatchers("/agenda/**").hasRole("PLAYER")
+                .requestMatchers("/auth/**", "/statistique/**").permitAll()
+                .requestMatchers("/players/me").hasRole("PLAYER")   // doit correspondre à ROLE_PLAYER
+                .requestMatchers("/agenda/**").hasAnyRole("PLAYER","AGENT")
+                .requestMatchers("/players/**","/agent/**").hasAnyRole("ADMIN","AGENT")
                 .requestMatchers("/users/me").authenticated()
                 .anyRequest().authenticated()
                 .and()
@@ -55,7 +56,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5174"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);

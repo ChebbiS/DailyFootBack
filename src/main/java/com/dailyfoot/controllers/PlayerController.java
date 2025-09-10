@@ -11,6 +11,7 @@ import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,6 +57,14 @@ public class PlayerController {
         Agent currentAgent = playerService.getCurrentAgent();
         List<PlayerDTO> players = playerService.getPlayersByAgent(currentAgent);
         return ResponseEntity.ok(players);
+    }
+    @GetMapping("/me")
+    @PreAuthorize("hasAuthority('PLAYER')")
+    public ResponseEntity<PlayerDTO> getMyProfile(@AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
+        // userDetails.getUsername() renvoie normalement l'email du joueur connecté
+        Optional<PlayerDTO> player = playerService.getPlayerByEmail(userDetails.getUsername());
+        return player.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }
