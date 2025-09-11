@@ -21,7 +21,7 @@ public class User {
     private Role role;
 
     public enum Role {
-        ADMIN, AGENT
+        ADMIN, AGENT, PLAYER
     }
 
     public User() {

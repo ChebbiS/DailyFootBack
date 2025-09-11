@@ -29,11 +29,11 @@ public class MailService {
         this.client = new MailjetClient(apiKeyPublic, apiKeyPrivate);
     }
 
-    public void sendAccessCodeEmail(String toEmail, String toName, int accessCode) {
+    public void sendAccessCodeEmail(String toEmail, String toName, String rawPassword) {
         try {
-            String subject = "Bienvenue sur DailyFoot - Votre code d'accès";
-            String textPart = generateText(toName, accessCode);
-            String htmlPart = generateHTML(toName, accessCode);
+            String subject = "Bienvenue sur DailyFoot";
+            String textPart = generateText(toName, rawPassword);
+            String htmlPart = generateHTML(toName, rawPassword);
             // Construction de la requête Mailjet
             MailjetRequest request = requestSendMailjet(toEmail, subject, textPart, htmlPart, toName);
             MailjetResponse response = client.post(request);
@@ -45,7 +45,7 @@ public class MailService {
         }
     }
 
-    private String generateHTML(String toName, int accessCode) {
+    private String generateHTML(String toName, String rawPassword) {
         return "<!DOCTYPE html>"
                 + "<html lang='fr'>"
                 + "<head><meta charset='UTF-8'><title>DailyFoot</title></head>"
@@ -53,7 +53,7 @@ public class MailService {
                 + "<h2 style='color:#2E86C1;'>Bonjour " + toName + ",</h2>"
                 + "<p>Bienvenue sur <strong>DailyFoot</strong> !</p>"
                 + "<p>Voici votre code d'accès pour vous connecter :</p>"
-                + "<p style='font-size:18px; font-weight:bold; color:#C0392B;'>" + accessCode + "</p>"
+                + "<p style='font-size:18px; font-weight:bold; color:#C0392B;'>"+ rawPassword + "</p>"
                 + "<p>Conservez-le précieusement et ne le partagez avec personne.</p>"
                 + "<hr style='border:none; border-top:1px solid #ccc;'/>"
                 + "<p style='font-size:12px; color:#888;'>"
@@ -62,10 +62,10 @@ public class MailService {
                 + "<p style='font-size:12px; color:#888;'>L'équipe DailyFoot</p>"
                 + "</body></html>";
     }
-private String generateText(String toName, int accessCode) {
+private String generateText(String toName, String rawPassword) {
         return "Bonjour " + toName + ",\n\n"
                 + "Bienvenue sur DailyFoot !\n"
-                + "Voici votre code d'accès pour vous connecter : " + accessCode + "\n\n"
+                + "Voici votre code d'accès pour vous connecter : " + rawPassword + "\n\n"
                 + "Conservez-le précieusement et ne le partagez avec personne.\n\n"
                 + "L'équipe DailyFoot";
 }

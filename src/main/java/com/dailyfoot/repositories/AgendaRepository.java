@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface AgendaRepository extends JpaRepository<Agenda, Integer> {
     Optional<Agenda> findByOwnerType(OwnerType ownerType);
-
+    Optional<Agenda> findByOwnerId(int ownerId);
 }

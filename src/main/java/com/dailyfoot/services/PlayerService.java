@@ -1,21 +1,18 @@
 package com.dailyfoot.services;
 
 import com.dailyfoot.config.CustomUserDetails;
-import com.dailyfoot.config.JwtUtil;
-import com.dailyfoot.dto.CreatePlayerRequest;
+import com.dailyfoot.dto.CreatePlayerDTO;
 import com.dailyfoot.dto.PlayerDTO;
-import com.dailyfoot.dto.StatistiqueDTO;
 import com.dailyfoot.entities.*;
 import com.dailyfoot.exceptions.CannotDeleteStrangerPlayerException;
 import com.dailyfoot.exceptions.PlayerAlreadyExistsException;
 import com.dailyfoot.exceptions.PlayerNotFoundException;
 import com.dailyfoot.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -24,35 +21,44 @@ import java.util.Optional;
 
 @Service
 public class PlayerService {
-    @Autowired
-    private JwtUtil jwtUtil;
+
     private final PlayerRepository playerRepository;
     private final AgentRepository agentRepository;
     private final MailService mailService;
-    private final StatistiqueRepository statistiqueRepository;
+    private final StatisticRepository statisticRepository;
     private final EventRepository eventRepository;
     private final AgendaRepository agendaRepository;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public PlayerService(AgendaRepository agendaRepository, StatistiqueRepository statistiqueRepository, AgentRepository agentRepository, PlayerRepository playerRepository, MailService mailService,
-                         EventRepository eventRepository) {
+    public PlayerService(
+            AgendaRepository agendaRepository,
+            StatisticRepository statisticRepository,
+            AgentRepository agentRepository,
+            PlayerRepository playerRepository,
+            MailService mailService,
+            EventRepository eventRepository,
+            PasswordEncoder passwordEncoder
+    ) {
         this.playerRepository = playerRepository;
         this.mailService = mailService;
         this.agentRepository = agentRepository;
-        this.statistiqueRepository = statistiqueRepository;
+        this.statisticRepository = statisticRepository;
         this.eventRepository = eventRepository;
         this.agendaRepository = agendaRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    // ---------------------------- CREATION DU JOUEUR ----------------------------
     @Transactional
-    public Player createPlayer(Integer agent, CreatePlayerRequest request) {
-        Agent foundAgent = agentRepository.findByUserId(agent)
-                .orElseThrow(() -> new RuntimeException("Agent non trouvé")); // A capter dans les exceptions
-        int accessCode = generateAccessCode();
+    public Player createPlayer(CreatePlayerDTO request) {
+        Agent agent = getCurrentAgent();
+
         if (playerRepository.existsByEmail(request.getEmail())) {
             throw new PlayerAlreadyExistsException("Un joueur avec cet email existe déjà !");
         }
+
+        // Création du joueur
         Player player = new Player();
         player.setName(request.getName());
         player.setAge(request.getAge());
@@ -61,18 +67,35 @@ public class PlayerService {
         player.setClub(request.getClub());
         player.setEmail(request.getEmail());
         player.setImage(request.getImage());
-        player.setAccessCode(accessCode);
-        player.setAgent(foundAgent);
+        player.setAgent(agent);
 
+        // Génération et encodage du mot de passe
+        String rawPassword = generateRandomPassword(10);
+
+        // Création du user associé
+        User user = new User();
+        user.setName(player.getName());
+        user.setEmail(player.getEmail());
+        user.setPassword(passwordEncoder.encode(rawPassword));
+        user.setRole(User.Role.PLAYER);
+
+        // Associer le user au player
+        player.setUser(user);
+
+        // Sauvegarde du player (avec user)
         Player savedPlayer = playerRepository.save(player);
+
+        // Création agenda
         Agenda agenda = new Agenda();
         agenda.setOwnerType(OwnerType.PLAYER);
         agenda.setColor("#FF5733");
         agenda.setOwnerId(savedPlayer.getId());
         agendaRepository.save(agenda);
+
+        // Événement par défaut
         Event defaultEvent = new Event(
-                "titre",
-                "Description",
+                "Titre par défaut",
+                "Description par défaut",
                 "PLAYER",
                 LocalDateTime.now(),
                 LocalDateTime.now().plusHours(1),
@@ -82,7 +105,8 @@ public class PlayerService {
         defaultEvent.setAgenda(agenda);
         eventRepository.save(defaultEvent);
 
-        Statistique stats = new Statistique(
+        // Statistiques initiales
+        Statistic stats = new Statistic(
                 savedPlayer,
                 "2025/2026",
                 0,
@@ -93,74 +117,23 @@ public class PlayerService {
                 0,
                 0
         );
-        statistiqueRepository.save(stats);
+        statisticRepository.save(stats);
 
-        try {
-            mailService.sendAccessCodeEmail(
-                    savedPlayer.getEmail(),
-                    savedPlayer.getName(),
-                    accessCode
-            );
+        // Envoi du mot de passe par email
+        mailService.sendAccessCodeEmail(savedPlayer.getEmail(), savedPlayer.getName(), rawPassword);
 
-        } catch (Exception e) {
-            System.err.println("Erreur lors de l'envoi de l'email : " + e.getMessage()); // a capter dans les exceptions
-            e.printStackTrace();
-        }
         return savedPlayer;
     }
 
-    public List<PlayerDTO> getAllPlayers() {
-        return playerRepository.findAll().stream()
-                .map(player -> new PlayerDTO(
-                        player.getName(),
-                        player.getPoste(),
-                        player.getImage(),
-                        player.getClub(),
-                        player.getAge(),
-                        player.getNationality()
-                ))
-                .toList();
-    }
-
-
-    public Optional<PlayerDTO> getPlayerById(Integer id) {
-        return playerRepository.findById(id)
-                .map(player -> new PlayerDTO(
-                        player.getName(),
-                        player.getPoste(),
-                        player.getImage(),
-                        player.getClub(),
-                        player.getAge(),
-                        player.getNationality()
-                ));
-    }
-
-    public Player savePlayer(Player player) {
-        return playerRepository.save(player);
-    }
-
-    public void deletePlayer(Integer playerId, Integer agentId) {
-        Player player = playerRepository.findById(playerId).orElseThrow(() -> new PlayerNotFoundException("Joueur non trouvé"));
-        if (player.getAgent().getUser().getId() != agentId) {
-            throw new CannotDeleteStrangerPlayerException("Vous ne pouvez pas supprimer un joueur qui ne vous appartient pas !");
-        }
-        playerRepository.delete(player);
-    }
-
-    public Optional<Player> getPlayerByPlayerId(Integer playerId) {
-        return playerRepository.findAll()
-                .stream()
-                .filter(player -> player.getId() == playerId)
-                .findFirst();
-    }
-
-    public Optional<Player> getPlayerByAccessCode(int accessCode) {
-        return playerRepository.findByAccessCode(accessCode);
-    }
-
-    private int generateAccessCode() {
+    // ---------------------------- UTILS ----------------------------
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
         SecureRandom random = new SecureRandom();
-        return 100000 + random.nextInt(900000);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 
     public Agent getCurrentAgent() {
@@ -170,20 +143,46 @@ public class PlayerService {
                 .getPrincipal();
         Integer agentId = userDetails.getAgentId();
         return agentRepository.findByUserId(agentId)
-                .orElseThrow(() -> new RuntimeException("Agent non trouvé")); // A capter dans les exceptions (se répète 2x)
+                .orElseThrow(() -> new RuntimeException("Agent non trouvé"));
     }
 
+    // ---------------------------- AUTRES MÉTHODES ----------------------------
+    public List<PlayerDTO> getAllPlayers() {
+        return playerRepository.findAll().stream()
+                .map(PlayerDTO::new)
+                .toList();
+    }
 
-    @Transactional
-    public Player createPlayer(CreatePlayerRequest request) {
-        Agent agent = getCurrentAgent();
-        return createPlayer(agent.getUser().getId(), request);
+    public Optional<PlayerDTO> getPlayerById(Integer id) {
+        return playerRepository.findById(id).map(PlayerDTO::new);
+    }
+
+    public Player savePlayer(Player player) {
+        return playerRepository.save(player);
+    }
+
+    public void deletePlayer(Integer playerId) {
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException("Joueur non trouvé"));
+
+        Agent currentAgent = getCurrentAgent();
+
+        if (player.getAgent().getId() != currentAgent.getId()) {
+            throw new CannotDeleteStrangerPlayerException("Vous ne pouvez pas supprimer un joueur qui ne vous appartient pas !");
+        }
+
+        playerRepository.delete(player);
     }
 
     public List<PlayerDTO> getPlayersByAgent(Agent agent) {
-        List<Player> players = playerRepository.findByAgentId(agent.getId());
-        return players.stream().map(PlayerDTO::new).toList();
+        return playerRepository.findByAgentId(agent.getId())
+                .stream()
+                .map(PlayerDTO::new)
+                .toList();
     }
 
-
+    public Optional<PlayerDTO> getPlayerByEmail(String email) {
+        return playerRepository.findByEmail(email)
+                .map(PlayerDTO::new);
+    }
 }

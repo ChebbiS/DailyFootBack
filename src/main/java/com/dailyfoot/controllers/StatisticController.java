@@ -1,10 +1,10 @@
 package com.dailyfoot.controllers;
 
 import com.dailyfoot.dto.PlayerDTO;
-import com.dailyfoot.dto.PlayerStatisticsDTO;
-import com.dailyfoot.dto.StatistiqueDTO;
+import com.dailyfoot.dto.PlayerStatisticDTO;
+import com.dailyfoot.dto.StatisticDTO;
 import com.dailyfoot.services.PlayerService;
-import com.dailyfoot.services.StatistiqueService;
+import com.dailyfoot.services.StatisticService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,29 +14,29 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/statistique")
-public class StatistiqueController {
+@RequestMapping("/statistic")
+public class StatisticController {
 
-    private final StatistiqueService statistiqueService;
+    private final StatisticService statisticService;
     private final PlayerService playerService;
 
     @Autowired
-    public StatistiqueController(StatistiqueService statistiqueService, PlayerService playerService) {
-        this.statistiqueService = statistiqueService;
+    public StatisticController(StatisticService statisticService, PlayerService playerService) {
+        this.statisticService = statisticService;
         this.playerService = playerService;
     }
 
     // Récupérer toutes les statistiques
     @GetMapping
-    public ResponseEntity<List<StatistiqueDTO>> getAllStatistiques() {
-        List<StatistiqueDTO> stats = statistiqueService.getAllStatistiques();
+    public ResponseEntity<List<StatisticDTO>> getAllStatistics() {
+        List<StatisticDTO> stats = statisticService.getAllStatistics();
         return ResponseEntity.ok(stats);
     }
 
     // Récupérer les statistiques d'un joueur avec ses infos
     @GetMapping("/player/{playerId}")
-    public ResponseEntity<PlayerStatisticsDTO> getStatByPlayer(@PathVariable Integer playerId) {
-        Optional<StatistiqueDTO> statsOpt = statistiqueService.getStatsByPlayerId(playerId);
+    public ResponseEntity<PlayerStatisticDTO> getStatByPlayer(@PathVariable Integer playerId) {
+        Optional<StatisticDTO> statsOpt = statisticService.getStatsByPlayerId(playerId);
         if (statsOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -46,7 +46,7 @@ public class StatistiqueController {
             return ResponseEntity.notFound().build();
         }
 
-        PlayerStatisticsDTO response = new PlayerStatisticsDTO(
+        PlayerStatisticDTO response = new PlayerStatisticDTO(
                 playerOpt.get(),
                 statsOpt.get()
         );
@@ -56,10 +56,10 @@ public class StatistiqueController {
 
     // Mettre à jour les statistiques
     @PatchMapping("/update/{id}")
-    public ResponseEntity<StatistiqueDTO> updateStatistiques(
+    public ResponseEntity<StatisticDTO> updateStatistic(
             @PathVariable int id,
             @RequestBody Map<String, Object> updates) {
-        StatistiqueDTO statistiqueDTO = statistiqueService.updateFields(id, updates);
-        return ResponseEntity.ok(statistiqueDTO);
+        StatisticDTO statisticDTO = statisticService.updateFields(id, updates);
+        return ResponseEntity.ok(statisticDTO);
     }
 }

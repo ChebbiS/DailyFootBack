@@ -1,6 +1,7 @@
 package com.dailyfoot.dto;
 
 public class PlayerLoginDTO {
+    private int id;
     private String name;
     private String poste;
     private String image;
@@ -9,7 +10,8 @@ public class PlayerLoginDTO {
     private String nationality;
     private String token;
     private String role;
-    public PlayerLoginDTO(String name, String poste, String image, String club, int age, String nationality, String token, String role) {
+    public PlayerLoginDTO(int id, String name, String poste, String image, String club, int age, String nationality, String token, String role) {
+        this.id = id;
         this.name = name;
         this.poste = poste;
         this.image = image;
@@ -18,6 +20,14 @@ public class PlayerLoginDTO {
         this.nationality = nationality;
         this.token = token;
         this.role = role;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
