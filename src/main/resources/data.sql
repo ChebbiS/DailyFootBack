@@ -16,7 +16,7 @@ VALUES
 -- Insert agent (depends on user)
 INSERT INTO agent (id, user_id)
 VALUES
-(1, 2);
+(1, 1);
 
 -- Insert player (depends on user and agent)
 INSERT INTO player (id, user_id, age, name, agent_id, email, club, image, nationality, poste)
