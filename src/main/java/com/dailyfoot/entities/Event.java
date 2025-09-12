@@ -10,7 +10,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @ManyToOne
-    @JoinColumn(name = "agenda_id", unique = true)
+    @JoinColumn(name = "agenda_id")
     private Agenda agenda;
     private String title;
     private String description;

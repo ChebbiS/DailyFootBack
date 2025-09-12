@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Integer> {
     List<Event> findByOwnerTypeAndOwnerId(Event.OwnerType ownerType, int ownerId);
+    List<Event> findByAgendaId(int agendaId);
+
 }

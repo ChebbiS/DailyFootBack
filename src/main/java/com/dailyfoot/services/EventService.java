@@ -32,5 +32,7 @@ public class EventService {
     public void deleteEvent(Integer id) {
         eventRepository.deleteById(id);
     }
-
+    public List<Event> getEventsByAgendaId(int agendaId) {
+        return eventRepository.findByAgendaId(agendaId);
+    }
 }
