@@ -48,5 +48,4 @@ VALUES
 -- Insert events (depends on agenda)
 INSERT INTO event (id, agenda_id, owner_id, date_heure_debut, date_heure_fin, description, title, type)
 VALUES
-(1, 1, 1, '2023-09-01 10:00:00', '2023-09-01 11:00:00', 'Réunion avec joueur', 'Agenda Agent', 'AGENT'),
-(2, 2, 1, '2023-09-02 14:00:00', '2023-09-02 15:00:00', 'Suivi avec joueur', 'Agenda Joueur', 'PLAYER');
+(2, 2, 2, '2023-09-02 14:00:00', '2023-09-02 15:00:00', 'Suivi avec joueur', 'Agenda Joueur', 'PLAYER');

@@ -4,6 +4,7 @@ import com.dailyfoot.config.CustomUserDetails;
 import com.dailyfoot.dto.EventDTO;
 import com.dailyfoot.entities.Agenda;
 import com.dailyfoot.entities.Event;
+import com.dailyfoot.entities.OwnerType;
 import com.dailyfoot.entities.User;
 import com.dailyfoot.repositories.AgendaRepository;
 import com.dailyfoot.services.AgendaService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -49,22 +51,66 @@ public class AgendaController {
                                           @AuthenticationPrincipal CustomUserDetails user) {
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Agenda agenda = agendaRepository.findByOwnerId(user.getUser().getId())
+        // 🔹 Récupérer un agenda correspondant au user
+        // Ici on prend juste le premier trouvé (simple et rapide)
+        Agenda agenda = agendaRepository.findFirstByOwnerId(user.getUser().getId())
+                .stream()
+                .findFirst()
                 .orElseThrow(() -> new RuntimeException("Agenda introuvable"));
 
+        // 🔹 Créer l'événement
         Event event = new Event();
         event.setTitle(dto.getTitle());
-        event.setDescription(dto.getDescription());  // match/entrainement/etc.
+        event.setDescription(dto.getDescription());
         event.setDateHeureDebut(dto.getDateHeureDebut());
         event.setDateHeureFin(dto.getDateHeureFin());
-        event.setOwnerType(dto.getOwnerType());      // AGENT ou PLAYER
+        event.setOwnerType(dto.getOwnerType());  // utilise directement le DTO
         event.setOwnerId(user.getUser().getId());
         event.setAgenda(agenda);
 
+        // 🔹 Sauvegarder et retourner
         Event savedEvent = eventService.saveEvent(event);
         return ResponseEntity.ok(savedEvent);
     }
+    @DeleteMapping("/event/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable int id,
+                                            @AuthenticationPrincipal CustomUserDetails user) {
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Event event = eventService.getEventById(id)
+                .orElseThrow(() -> new RuntimeException("Événement introuvable"));
 
+        if (event.getOwnerId() != user.getUser().getId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
 
+        // Supprimer l'événement
+        eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/me")
+    public List<Event> getMyEvents(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new RuntimeException("Utilisateur non connecté");
+        }
+
+        int userId = userDetails.getUser().getId();
+
+        // Récupère tous les agendas de l'utilisateur
+        List<Agenda> agendas = agendaRepository.findByOwnerId(userId);
+
+        if (agendas.isEmpty()) {
+            throw new RuntimeException("Aucun agenda trouvé pour cet utilisateur");
+        }
+
+        // Récupère tous les événements de tous les agendas
+        List<Event> allEvents = new ArrayList<>();
+        for (Agenda agenda : agendas) {
+            List<Event> events = eventService.getEventsByAgendaId(agenda.getId());
+            allEvents.addAll(events);
+        }
+
+        return allEvents;
+    }
 
 }
