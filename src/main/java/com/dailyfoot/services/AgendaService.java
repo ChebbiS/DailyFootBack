@@ -60,5 +60,13 @@ public class AgendaService {
         }
         return allEvents;
     }
+    public List<Event> getPlayerFullAgenda(int playerId) {
+        List<Agenda> agendas = agendaRepository.findByOwnerId(playerId);
+        List<Event> allEvents = new ArrayList<>();
+        for (Agenda agenda : agendas) {
+            allEvents.addAll(eventRepository.findByAgendaId(agenda.getId()));
+        }
+        return allEvents;
+    }
 
 }

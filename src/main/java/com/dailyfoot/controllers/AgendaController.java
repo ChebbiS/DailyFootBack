@@ -51,7 +51,7 @@ public class AgendaController {
                                           @AuthenticationPrincipal CustomUserDetails user) {
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        // 🔹 Récupérer un agenda correspondant au user
+        // Récupérer un agenda correspondant au user
         // Ici on prend juste le premier trouvé (simple et rapide)
         Agenda agenda = agendaRepository.findFirstByOwnerId(user.getUser().getId())
                 .stream()
@@ -72,6 +72,48 @@ public class AgendaController {
         Event savedEvent = eventService.saveEvent(event);
         return ResponseEntity.ok(savedEvent);
     }
+    @PostMapping("/event/player/{playerId}")
+    public ResponseEntity<Event> addEventForPlayer(@PathVariable int playerId,
+                                                   @RequestBody EventDTO dto,
+                                                   @AuthenticationPrincipal CustomUserDetails user) {
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        // Récupérer l'agenda du joueur
+        Agenda agenda = agendaRepository.findFirstByOwnerId(playerId)
+                .orElseThrow(() -> new RuntimeException("Agenda du joueur introuvable"));
+
+        Event event = new Event();
+        event.setTitle(dto.getTitle());
+        event.setDescription(dto.getDescription());
+        event.setDateHeureDebut(dto.getDateHeureDebut());
+        event.setDateHeureFin(dto.getDateHeureFin());
+        event.setOwnerType(dto.getOwnerType()); // AGENT qui crée l'événement
+        event.setOwnerId(playerId);             // ⚠️ important : ownerId = playerId
+        event.setAgenda(agenda);
+
+        Event savedEvent = eventService.saveEvent(event);
+        return ResponseEntity.ok(savedEvent);
+    }
+    @DeleteMapping("/event/player/{eventId}")
+    public ResponseEntity<Void> deletePlayerEvent(@PathVariable int eventId,
+                                                  @AuthenticationPrincipal CustomUserDetails user) {
+        if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        // Vérifie que l'utilisateur est agent
+        if (user.getUser().getRole() != User.Role.AGENT) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Event event = eventService.getEventById(eventId)
+                .orElseThrow(() -> new RuntimeException("Événement introuvable"));
+
+        // Supprimer l’événement même si l’ownerId n’est pas celui de l’agent
+        eventService.deleteEvent(eventId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
     @DeleteMapping("/event/{id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable int id,
                                             @AuthenticationPrincipal CustomUserDetails user) {
@@ -112,5 +154,11 @@ public class AgendaController {
 
         return allEvents;
     }
+    @GetMapping("/player/{playerId}")
+    public ResponseEntity<List<Event>> getPlayerAgenda(@PathVariable int playerId) {
+        List<Event> events = agendaService.getPlayerFullAgenda(playerId);
+        return ResponseEntity.ok(events);
+    }
+
 
 }
