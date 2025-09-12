@@ -1,6 +1,6 @@
 package com.dailyfoot.controllers;
 
-import com.dailyfoot.dto.CreatePlayerRequest;
+import com.dailyfoot.dto.CreatePlayerDTO;
 import com.dailyfoot.dto.PlayerDTO;
 import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
@@ -27,26 +27,22 @@ public class AgentController {
         this.agentRepository = agentRepository;
     }
 
-    @PostMapping("/addPlayer")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PlayerDTO> addPlayer(@Valid @RequestBody CreatePlayerRequest request, @RequestParam int agentId) {
-        Optional<Agent> optionalAgent = agentRepository.findById(agentId);
-        if (optionalAgent.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        Agent agent = optionalAgent.get();
-        Player createdPlayer = playerService.createPlayer(agent.getUser().getId(), request);
-
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'AGENT')")
+    public ResponseEntity<PlayerDTO> addPlayer(@Valid @RequestBody CreatePlayerDTO request) {
+        // Création du joueur pour l'agent actuellement connecté
+        Player createdPlayer = playerService.createPlayer(request);
         return ResponseEntity.ok(new PlayerDTO(createdPlayer));
     }
 
-    @DeleteMapping("/deletePlayer")
+
+    @DeleteMapping
     public ResponseEntity<Map<String, String>> deletePlayer(@RequestParam int playerId) {
-        Agent currentAgent = playerService.getCurrentAgent();
-        playerService.deletePlayer(playerId, currentAgent.getUser().getId());
+        playerService.deletePlayer(playerId);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "Joueur supprimé !");
         return ResponseEntity.ok(response);
     }
+
 }

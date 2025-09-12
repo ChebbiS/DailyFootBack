@@ -1,12 +1,12 @@
 package com.dailyfoot.dto;
 
-public class PlayerStatisticsDTO {
+public class PlayerStatisticDTO {
 
     private PlayerDTO player;
-    private StatistiqueDTO statistics;
+    private StatisticDTO statistics;
 
 
-    public PlayerStatisticsDTO(PlayerDTO player, StatistiqueDTO statistics) {
+    public PlayerStatisticDTO(PlayerDTO player, StatisticDTO statistics) {
         this.player = player;
         this.statistics = statistics;
 
@@ -21,11 +21,11 @@ public class PlayerStatisticsDTO {
         this.player = player;
     }
 
-    public StatistiqueDTO getStatistics() {
+    public StatisticDTO getStatistics() {
         return statistics;
     }
 
-    public void setStatistics(StatistiqueDTO statistics) {
+    public void setStatistics(StatisticDTO statistics) {
         this.statistics = statistics;
     }
 

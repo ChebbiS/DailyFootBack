@@ -12,7 +12,8 @@ public class PlayerDTO {
     private String nationality;
     private String agentId;
 
-    public PlayerDTO(String name, String poste, String image, String club, int age, String nationality) {
+    public PlayerDTO(int id, String name, String poste, String image, String club, int age, String nationality) {
+        this.id = id;
         this.name = name;
         this.poste = poste;
         this.image = image;

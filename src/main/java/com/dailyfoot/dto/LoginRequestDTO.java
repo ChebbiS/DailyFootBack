@@ -3,17 +3,17 @@ package com.dailyfoot.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class LoginRequest {
+public class LoginRequestDTO {
     @Email
     @NotBlank(message = "Un Email est obligatoire")
     private String email;
     @NotBlank(message = "Le mot de passe est obligatoire")
     private String password;
 
-    public LoginRequest() {
+    public LoginRequestDTO() {
     }
 
-    public LoginRequest(String email, String password) {
+    public LoginRequestDTO(String email, String password) {
         this.email = email;
         this.password = password;
     }

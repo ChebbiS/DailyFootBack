@@ -4,10 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public class CreatePlayerRequest {
+public class CreatePlayerDTO {
     @NotBlank(message = "Le nom est obligatoire")
     private String name;
-    @NotBlank(message = "L'age est obligatoire")
     @NotNull
     private int age;
     @NotBlank(message = "La nationalité est obligatoire")
@@ -19,11 +18,11 @@ public class CreatePlayerRequest {
     private String email;
     private String image;
 
-    public CreatePlayerRequest() {
+    public CreatePlayerDTO() {
     }
 
-    public CreatePlayerRequest(String name, int age, String nationality,
-                               String poste, String club, String email, String image) {
+    public CreatePlayerDTO(String name, int age, String nationality,
+                           String poste, String club, String email, String image) {
         this.name = name;
         this.age = age;
         this.nationality = nationality;
