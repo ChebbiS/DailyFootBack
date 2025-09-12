@@ -30,7 +30,8 @@ public class PlayerDTO {
         this.club = player.getClub();
         this.age = player.getAge();
         this.nationality = player.getNationality();
-        this.agentId = player.getAgent().getUser().getName();
+        // Stocker l'identifiant de l'agent en toute sécurité (évite NPE sur user)
+        this.agentId = player.getAgent() != null ? String.valueOf(player.getAgent().getId()) : null;
     }
 
     public int getId() {

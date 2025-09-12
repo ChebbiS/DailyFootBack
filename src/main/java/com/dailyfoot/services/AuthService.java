@@ -88,22 +88,40 @@ public class AuthService {
     private void setAgenda(User savedUser, User.Role role) {
         String BASE_AGENDA_COLOR = "#000000";
 
+        // Déterminer l'ID de l'entité métier propriétaire (Agent.id ou Player.id)
+        int ownerEntityId;
+        OwnerType ownerType;
+        if (role == User.Role.AGENT) {
+            Agent agent = agentService.findByUserId(savedUser.getId())
+                    .orElseThrow(() -> new AgentNotFoundException("Agent not found with user id: " + savedUser.getId()));
+            ownerEntityId = agent.getId();
+            ownerType = OwnerType.AGENT;
+        } else {
+            Player player = playerRepository.findByUserId(savedUser.getId())
+                    .orElseThrow(() -> new UsernameNotFoundException("Player not found for user id: " + savedUser.getId()));
+            ownerEntityId = player.getId();
+            ownerType = OwnerType.PLAYER;
+        }
+
+        // Créer l'agenda avec l'ownerId pointant vers l'entité (Agent/Player)
         Agenda agenda = new Agenda();
-        agenda.setOwnerType(role == User.Role.AGENT ? OwnerType.AGENT : OwnerType.PLAYER);
-        agenda.setOwnerId(savedUser.getId());
+        agenda.setOwnerType(ownerType);
+        agenda.setOwnerId(ownerEntityId);
         agenda.setColor(BASE_AGENDA_COLOR);
 
         Agenda savedAgenda = agendaRepository.save(agenda);
 
+        // Créer un événement par défaut correctement lié
         Event defaultEvent = new Event(
                 "Agenda " + role.name(),
                 "Agenda",
-                role.name().toUpperCase(), // EN MAJ BB
+                role.name().toUpperCase(),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusHours(1),
                 role == User.Role.AGENT ? Event.OwnerType.AGENT : Event.OwnerType.PLAYER,
-                savedAgenda.getId()
+                ownerEntityId
         );
+        defaultEvent.setAgenda(savedAgenda);
 
         eventRepository.save(defaultEvent);
     }

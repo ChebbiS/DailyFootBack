@@ -10,4 +10,5 @@ public interface PlayerRepository extends JpaRepository<Player, Integer> {
     List<Player> findByAgentId(int agentId);
     Optional<Player> findByEmail(String email);
     boolean existsByEmail(String email);
+    Optional<Player> findByUserId(Integer userId);
 }

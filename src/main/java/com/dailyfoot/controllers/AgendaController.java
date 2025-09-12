@@ -7,8 +7,10 @@ import com.dailyfoot.entities.Event;
 import com.dailyfoot.entities.OwnerType;
 import com.dailyfoot.entities.User;
 import com.dailyfoot.repositories.AgendaRepository;
+import com.dailyfoot.repositories.PlayerRepository;
 import com.dailyfoot.services.AgendaService;
 import com.dailyfoot.services.EventService;
+import com.dailyfoot.services.AgentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +27,15 @@ public class AgendaController {
     private final AgendaService agendaService;
     private final EventService eventService;
     private final AgendaRepository agendaRepository;
-    public AgendaController(AgendaRepository agendaRepository, EventService eventService, AgendaService agendaService) {
+    private final AgentService agentService;
+    private final PlayerRepository playerRepository;
+    public AgendaController(AgendaRepository agendaRepository, EventService eventService, AgendaService agendaService,
+                            AgentService agentService, PlayerRepository playerRepository) {
         this.agendaRepository = agendaRepository;
         this.eventService = eventService;
         this.agendaService = agendaService;
+        this.agentService = agentService;
+        this.playerRepository = playerRepository;
     }
 
     @GetMapping
@@ -37,8 +44,22 @@ public class AgendaController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<Event> events = agendaService.getAgentFullAgenda(userDetails.getUser().getId());
-        return ResponseEntity.ok(events);
+        User user = userDetails.getUser();
+        if (user.getRole() == User.Role.AGENT) {
+            int agentId = agentService.findByUserId(user.getId())
+                    .orElseThrow(() -> new RuntimeException("Agent introuvable pour l'utilisateur"))
+                    .getId();
+            List<Event> events = agendaService.getAgentFullAgenda(agentId);
+            return ResponseEntity.ok(events);
+        } else if (user.getRole() == User.Role.PLAYER) {
+            int playerId = playerRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new RuntimeException("Joueur introuvable pour l'utilisateur"))
+                    .getId();
+            List<Event> events = agendaService.getPlayerFullAgenda(playerId);
+            return ResponseEntity.ok(events);
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @GetMapping("/agent/{id}")
@@ -51,24 +72,43 @@ public class AgendaController {
                                           @AuthenticationPrincipal CustomUserDetails user) {
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        // Récupérer un agenda correspondant au user
-        // Ici on prend juste le premier trouvé (simple et rapide)
-        Agenda agenda = agendaRepository.findFirstByOwnerId(user.getUser().getId())
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Agenda introuvable"));
+        User u = user.getUser();
 
-        // 🔹 Créer l'événement
+        // Déterminer l'entité (Agent/Player) et récupérer le bon agenda
+        Agenda agenda;
+        Event.OwnerType ownerType;
+        int ownerId;
+        if (u.getRole() == User.Role.AGENT) {
+            int agentId = agentService.findByUserId(u.getId())
+                    .orElseThrow(() -> new RuntimeException("Agent introuvable pour l'utilisateur"))
+                    .getId();
+            agenda = agendaRepository.findByOwnerIdAndOwnerType(agentId, OwnerType.AGENT)
+                    .orElseThrow(() -> new RuntimeException("Agenda agent introuvable"));
+            ownerType = Event.OwnerType.AGENT;
+            ownerId = agentId;
+        } else if (u.getRole() == User.Role.PLAYER) {
+            int playerId = playerRepository.findByUserId(u.getId())
+                    .orElseThrow(() -> new RuntimeException("Joueur introuvable pour l'utilisateur"))
+                    .getId();
+            agenda = agendaRepository.findByOwnerIdAndOwnerType(playerId, OwnerType.PLAYER)
+                    .orElseThrow(() -> new RuntimeException("Agenda joueur introuvable"));
+            ownerType = Event.OwnerType.PLAYER;
+            ownerId = playerId;
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        // Créer l'événement
         Event event = new Event();
         event.setTitle(dto.getTitle());
         event.setDescription(dto.getDescription());
         event.setDateHeureDebut(dto.getDateHeureDebut());
         event.setDateHeureFin(dto.getDateHeureFin());
-        event.setOwnerType(dto.getOwnerType());  // utilise directement le DTO
-        event.setOwnerId(user.getUser().getId());
+        // on ignore dto.getOwnerType() pour éviter incohérence; on force selon l'utilisateur
+        event.setOwnerType(ownerType);
+        event.setOwnerId(ownerId);
         event.setAgenda(agenda);
 
-        // 🔹 Sauvegarder et retourner
         Event savedEvent = eventService.saveEvent(event);
         return ResponseEntity.ok(savedEvent);
     }
@@ -87,8 +127,8 @@ public class AgendaController {
         event.setDescription(dto.getDescription());
         event.setDateHeureDebut(dto.getDateHeureDebut());
         event.setDateHeureFin(dto.getDateHeureFin());
-        event.setOwnerType(dto.getOwnerType()); // AGENT qui crée l'événement
-        event.setOwnerId(playerId);             // ⚠️ important : ownerId = playerId
+        event.setOwnerType(Event.OwnerType.PLAYER);
+        event.setOwnerId(playerId);
         event.setAgenda(agenda);
 
         Event savedEvent = eventService.saveEvent(event);
@@ -121,39 +161,53 @@ public class AgendaController {
         Event event = eventService.getEventById(id)
                 .orElseThrow(() -> new RuntimeException("Événement introuvable"));
 
-        if (event.getOwnerId() != user.getUser().getId()) {
+        User u = user.getUser();
+        boolean allowed = false;
+        if (u.getRole() == User.Role.AGENT && event.getOwnerType() == Event.OwnerType.AGENT) {
+            int agentId = agentService.findByUserId(u.getId())
+                    .orElseThrow(() -> new RuntimeException("Agent introuvable pour l'utilisateur"))
+                    .getId();
+            allowed = (event.getOwnerId() == agentId);
+        } else if (u.getRole() == User.Role.PLAYER && event.getOwnerType() == Event.OwnerType.PLAYER) {
+            int playerId = playerRepository.findByUserId(u.getId())
+                    .orElseThrow(() -> new RuntimeException("Joueur introuvable pour l'utilisateur"))
+                    .getId();
+            allowed = (event.getOwnerId() == playerId);
+        }
+
+        if (!allowed) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        // Supprimer l'événement
         eventService.deleteEvent(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")
-    public List<Event> getMyEvents(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<List<Event>> getMyEvents(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
-            throw new RuntimeException("Utilisateur non connecté");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        int userId = userDetails.getUser().getId();
+        User user = userDetails.getUser();
 
-        // Récupère tous les agendas de l'utilisateur
-        List<Agenda> agendas = agendaRepository.findByOwnerId(userId);
-
-        if (agendas.isEmpty()) {
-            throw new RuntimeException("Aucun agenda trouvé pour cet utilisateur");
-        }
-
-        // Récupère tous les événements de tous les agendas
         List<Event> allEvents = new ArrayList<>();
-        for (Agenda agenda : agendas) {
-            List<Event> events = eventService.getEventsByAgendaId(agenda.getId());
-            allEvents.addAll(events);
+        if (user.getRole() == User.Role.AGENT) {
+            int agentId = agentService.findByUserId(user.getId())
+                    .orElseThrow(() -> new RuntimeException("Agent introuvable pour l'utilisateur"))
+                    .getId();
+            allEvents = agendaService.getAgentFullAgenda(agentId);
+        } else if (user.getRole() == User.Role.PLAYER) {
+            int playerId = playerRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new RuntimeException("Joueur introuvable pour l'utilisateur"))
+                    .getId();
+            allEvents = agendaService.getPlayerFullAgenda(playerId);
         }
 
-        return allEvents;
+        return ResponseEntity.ok(allEvents);
     }
+
+
     @GetMapping("/player/{playerId}")
     public ResponseEntity<List<Event>> getPlayerAgenda(@PathVariable int playerId) {
         List<Event> events = agendaService.getPlayerFullAgenda(playerId);

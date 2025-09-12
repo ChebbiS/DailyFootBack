@@ -7,6 +7,7 @@ import com.dailyfoot.entities.Agent;
 import com.dailyfoot.entities.Player;
 import com.dailyfoot.repositories.AgentRepository;
 import com.dailyfoot.services.PlayerService;
+import com.dailyfoot.config.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -58,10 +59,12 @@ public class PlayerController {
         return ResponseEntity.ok(players);
     }
 
-    // TODO : à revoir
+    // Récupérer le profil du joueur connecté
     @GetMapping("/me")
-    public ResponseEntity<PlayerDTO> getMyProfile(@AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
-        // userDetails.getUsername() renvoie normalement l'email du joueur connecté
+    public ResponseEntity<PlayerDTO> getMyProfile(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(401).build();
+        }
         Optional<PlayerDTO> player = playerService.getPlayerByEmail(userDetails.getUsername());
         return player.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

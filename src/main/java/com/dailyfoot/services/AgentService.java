@@ -34,4 +34,8 @@ public class AgentService {
         agentRepository.deleteById(id);
     }
 
+    public Optional<Agent> findByUserId(Integer userId) {
+        return agentRepository.findByUserId(userId);
+    }
+
 }
