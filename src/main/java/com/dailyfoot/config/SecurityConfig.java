@@ -39,7 +39,7 @@ public class SecurityConfig {
                     .requestMatchers("/agenda/**").hasAnyRole("PLAYER","AGENT")
                     .requestMatchers("/players/**","/agent/**").hasAnyRole("ADMIN","AGENT")
                     .requestMatchers("/users/me").authenticated()
-                            .requestMatchers("/statistic/**").hasAnyRole("AGENT", "ADMIN")
+                            .requestMatchers("/statistic/**").hasAnyRole("AGENT", "ADMIN","PLAYER")
                     .anyRequest().authenticated()
                 )
 
