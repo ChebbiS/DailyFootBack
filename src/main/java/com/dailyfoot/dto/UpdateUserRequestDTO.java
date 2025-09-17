@@ -11,6 +11,15 @@ public class UpdateUserRequestDTO {
     )
     private String password;
     private String confirmPassword;
+    private String currentPassword;
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
 
     public String getName() {
         return name;

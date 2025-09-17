@@ -3,6 +3,7 @@ package com.dailyfoot.controllers;
 import com.dailyfoot.dto.UpdateUserDTO;
 import com.dailyfoot.dto.UpdateUserRequestDTO;
 import com.dailyfoot.entities.User;
+import com.dailyfoot.services.MailService;
 import com.dailyfoot.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private MailService mailService;
 
     @GetMapping("/me")
     public ResponseEntity<UpdateUserDTO> getCurrentUser(Authentication authentication) {
@@ -29,7 +32,6 @@ public class UserController {
         return userOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 
 
     @PutMapping("/update")
@@ -59,6 +61,9 @@ public class UserController {
         }
 
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            if (request.getCurrentPassword() == null || !userService.matchesPassword(request.getCurrentPassword(), user.getPassword())) {
+                return ResponseEntity.badRequest().body("Mot de passe actuel incorrect");
+            }
             if (!request.getPassword().equals(request.getConfirmPassword())) {
                 return ResponseEntity.badRequest().body("Les mots de passe ne correspondent pas");
             }
@@ -70,3 +75,4 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 }
+

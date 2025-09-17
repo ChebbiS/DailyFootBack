@@ -42,12 +42,16 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public String encodePassword(String rawPassword){
+    public String encodePassword(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
     }
+
     public Optional<UpdateUserDTO> getUserDTOByEmail(String email) {
         return userRepository.findByEmail(email)
                 .map(user -> new UpdateUserDTO(user.getName(), user.getEmail()));
     }
 
+    public boolean matchesPassword(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
 }

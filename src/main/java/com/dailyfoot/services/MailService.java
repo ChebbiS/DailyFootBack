@@ -28,6 +28,20 @@ public class MailService {
     public void init() {
         this.client = new MailjetClient(apiKeyPublic, apiKeyPrivate);
     }
+    public void sendForgotPasswordEmail(String toEmail, String toName, String newPassword) {
+        try {
+            String subject = "Réinitialisation de votre mot de passe DailyFoot";
+            String textPart = generateForgotPasswordText(toName, newPassword);
+            String htmlPart = generateForgotPasswordHTML(toName, newPassword);
+
+            MailjetRequest request = requestSendMailjet(toEmail, subject, textPart, htmlPart, toName);
+            MailjetResponse response = client.post(request);
+            System.out.println("Mail de réinitialisation envoyé à " + toEmail + " avec le statut : " + response.getStatus());
+        } catch (MailjetException e) {
+            System.err.println("Erreur d'envoi Mailjet: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     public void sendAccessCodeEmail(String toEmail, String toName, String rawPassword) {
         try {
@@ -43,6 +57,25 @@ public class MailService {
             System.err.println("Erreur d'envoi Mailjet: " + e.getMessage()); // a capter dans les exceptions
             e.printStackTrace();
         }
+    }
+    private String generateForgotPasswordHTML(String toName, String newPassword) {
+        return "<!DOCTYPE html>"
+                + "<html lang='fr'><head><meta charset='UTF-8'><title>DailyFoot</title></head>"
+                + "<body style='font-family:Arial,sans-serif; line-height:1.6;'>"
+                + "<h2>Bonjour " + toName + ",</h2>"
+                + "<p>Vous avez demandé la réinitialisation de votre mot de passe sur <strong>DailyFoot</strong>.</p>"
+                + "<p>Voici votre nouveau mot de passe temporaire :</p>"
+                + "<p style='font-size:18px; font-weight:bold; color:#C0392B;'>" + newPassword + "</p>"
+                + "<p>⚠️ Pour votre sécurité, veuillez le changer dès votre prochaine connexion.</p>"
+                + "<hr/><p>L'équipe DailyFoot</p></body></html>";
+    }
+
+    private String generateForgotPasswordText(String toName, String newPassword) {
+        return "Bonjour " + toName + ",\n\n"
+                + "Vous avez demandé la réinitialisation de votre mot de passe sur DailyFoot.\n"
+                + "Voici votre nouveau mot de passe temporaire : " + newPassword + "\n\n"
+                + "⚠️ Pour votre sécurité, veuillez le changer dès votre prochaine connexion.\n\n"
+                + "L'équipe DailyFoot";
     }
 
     private String generateHTML(String toName, String rawPassword) {
