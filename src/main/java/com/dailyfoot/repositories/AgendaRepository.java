@@ -12,6 +12,5 @@ public interface AgendaRepository extends JpaRepository<Agenda, Integer> {
     List<Agenda> findByOwnerId(int ownerId);
     Optional<Agenda> findByOwnerIdAndOwnerType(int ownerId, OwnerType ownerType);
     Optional<Agenda> findFirstByOwnerId(int ownerId);
-
-
+    Optional<Agenda> findByOwnerTypeAndOwnerId(OwnerType ownerType, int ownerId);
 }

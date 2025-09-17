@@ -11,6 +11,7 @@ public class PlayerDTO {
     private int age;
     private String nationality;
     private String agentId;
+    private int userId;
 
     public PlayerDTO(int id, String name, String poste, String image, String club, int age, String nationality) {
         this.id = id;
@@ -32,6 +33,15 @@ public class PlayerDTO {
         this.nationality = player.getNationality();
         // Stocker l'identifiant de l'agent en toute sécurité (évite NPE sur user)
         this.agentId = player.getAgent() != null ? String.valueOf(player.getAgent().getId()) : null;
+        this.userId = player.getUser() != null ? player.getUser().getId() : null;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public int getId() {
