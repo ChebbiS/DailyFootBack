@@ -44,27 +44,41 @@ public class StatisticController {
 
     // Récupérer les statistiques d'un joueur avec ses infos
     @GetMapping("/player/{playerId}")
-    public ResponseEntity<PlayerStatisticDTO> getStatByPlayer(@PathVariable Integer playerId, @AuthenticationPrincipal CustomUserDetails currentUser) {
+    public ResponseEntity<PlayerStatisticDTO> getStatByPlayer(
+            @PathVariable Integer playerId,
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+
+        // Récupérer les stats du joueur
         Optional<StatisticDTO> statsOpt = statisticService.getStatsByPlayerId(playerId);
         if (statsOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
+        // Récupérer le joueur
         Optional<PlayerDTO> playerOpt = playerService.getPlayerById(playerId);
         if (playerOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         PlayerDTO player = playerOpt.get();
+
+        // Vérifie si le joueur consulté est lui-même
+        boolean isSelf = currentUser.getUser().getId() == player.getUserId(); // si tu as ajouté userId dans PlayerDTO
+
+        // Vérifie si le user connecté est agent et s'il est l'agent de ce joueur
         Optional<Agent> agentOpt = agentService.findByUserId(currentUser.getUser().getId());
-        if (agentOpt.isEmpty() || !player.getAgentId().equals(String.valueOf(agentOpt.get().getId()))){
+        boolean isAgentOfPlayer = agentOpt.isPresent() && player.getAgentId() != null
+                && player.getAgentId().equals(String.valueOf(agentOpt.get().getId()));
+
+        // Si ce n’est ni le joueur lui-même, ni son agent, on bloque l’accès
+        if (!isSelf && !isAgentOfPlayer) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        PlayerStatisticDTO response = new PlayerStatisticDTO(
-                playerOpt.get(),
-                statsOpt.get());
+
+        PlayerStatisticDTO response = new PlayerStatisticDTO(player, statsOpt.get());
         return ResponseEntity.ok(response);
     }
-        // Mettre à jour les statistiques
+
+    // Mettre à jour les statistiques
         @PatchMapping("/update/{id}")
         public ResponseEntity<StatisticDTO> updateStatistic (
         @PathVariable int id,
