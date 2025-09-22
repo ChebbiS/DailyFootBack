@@ -119,7 +119,7 @@ public class AgendaController {
         if (user == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         // Récupérer l'agenda du joueur
-        Agenda agenda = agendaRepository.findFirstByOwnerId(playerId)
+        Agenda agenda = agendaRepository.findByOwnerIdAndOwnerType(playerId, OwnerType.PLAYER)
                 .orElseThrow(() -> new RuntimeException("Agenda du joueur introuvable"));
 
         Event event = new Event();

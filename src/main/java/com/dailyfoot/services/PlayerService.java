@@ -92,19 +92,6 @@ public class PlayerService {
         agenda.setOwnerId(savedPlayer.getId());
         agendaRepository.save(agenda);
 
-        // Événement par défaut
-        Event defaultEvent = new Event(
-                "Titre par défaut",
-                "Description par défaut",
-                "PLAYER",
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                Event.OwnerType.PLAYER,
-                savedPlayer.getId()
-        );
-        defaultEvent.setAgenda(agenda);
-        eventRepository.save(defaultEvent);
-
         // Statistiques initiales
         Statistic stats = new Statistic(
                 savedPlayer,

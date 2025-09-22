@@ -111,19 +111,6 @@ public class AuthService {
 
         Agenda savedAgenda = agendaRepository.save(agenda);
 
-        // Créer un événement par défaut correctement lié
-        Event defaultEvent = new Event(
-                "Agenda " + role.name(),
-                "Agenda",
-                role.name().toUpperCase(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusHours(1),
-                role == User.Role.AGENT ? Event.OwnerType.AGENT : Event.OwnerType.PLAYER,
-                ownerEntityId
-        );
-        defaultEvent.setAgenda(savedAgenda);
-
-        eventRepository.save(defaultEvent);
     }
 }
 
