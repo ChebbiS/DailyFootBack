@@ -1,6 +1,6 @@
 package com.dailyfoot.services;
 
-import com.dailyfoot.entities.Agenda;
+import com.dailyfoot.dto.EventDisplayDTO;
 import com.dailyfoot.entities.Event;
 import com.dailyfoot.entities.OwnerType;
 import com.dailyfoot.entities.Player;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AgendaService {
+
     private final AgendaRepository agendaRepository;
     private final EventService eventService;
     private final EventRepository eventRepository;
@@ -31,25 +31,7 @@ public class AgendaService {
         this.playerRepository = playerRepository;
     }
 
-    public List<Agenda> getAllAgendas() {
-        return agendaRepository.findAll();
-    }
-
-    public Agenda saveAgenda(Agenda agenda) {
-        return agendaRepository.save(agenda);
-    }
-
-    public Optional<Agenda> getAgendaById(Integer id) {
-        return agendaRepository.findById(id);
-    }
-
-    public void deleteAgenda(Integer id) {
-        agendaRepository.deleteById(id);
-    }
-
-    public Optional<Agenda> getAgendaByOwnerType(OwnerType ownerType) {
-        return agendaRepository.findByOwnerType(ownerType);
-    }
+    // Méthodes existantes pour récupérer Event
 
     public List<Event> getAgentFullAgenda(int agentId) {
         List<Event> allEvents = new ArrayList<>(eventRepository.findByOwnerTypeAndOwnerId(Event.OwnerType.AGENT, agentId));
@@ -64,6 +46,15 @@ public class AgendaService {
     public List<Event> getPlayerFullAgenda(int playerId) {
         return agendaRepository.findByOwnerTypeAndOwnerId(OwnerType.PLAYER, playerId)
                 .map(agenda -> eventRepository.findByAgendaId(agenda.getId()))
-                .orElse(List.of()); // Liste vide si pas trouvé
+                .orElse(List.of());
+    }
+
+    // Nouvelles méthodes pour retourner DTO
+    public List<EventDisplayDTO> getAgentFullAgendaDTO(int agentId) {
+        return eventService.mapListToDTO(getAgentFullAgenda(agentId));
+    }
+
+    public List<EventDisplayDTO> getPlayerFullAgendaDTO(int playerId) {
+        return eventService.mapListToDTO(getPlayerFullAgenda(playerId));
     }
 }

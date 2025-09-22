@@ -2,6 +2,7 @@ package com.dailyfoot.controllers;
 
 import com.dailyfoot.config.CustomUserDetails;
 import com.dailyfoot.dto.EventDTO;
+import com.dailyfoot.dto.EventDisplayDTO;
 import com.dailyfoot.entities.Agenda;
 import com.dailyfoot.entities.Event;
 import com.dailyfoot.entities.OwnerType;
@@ -104,7 +105,6 @@ public class AgendaController {
         event.setDescription(dto.getDescription());
         event.setDateHeureDebut(dto.getDateHeureDebut());
         event.setDateHeureFin(dto.getDateHeureFin());
-        // on ignore dto.getOwnerType() pour éviter incohérence; on force selon l'utilisateur
         event.setOwnerType(ownerType);
         event.setOwnerId(ownerId);
         event.setAgenda(agenda);
@@ -184,28 +184,29 @@ public class AgendaController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<Event>> getMyEvents(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (userDetails == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<List<EventDisplayDTO>> getMyEvents(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         User user = userDetails.getUser();
+        List<EventDisplayDTO> events;
 
-        List<Event> allEvents = new ArrayList<>();
         if (user.getRole() == User.Role.AGENT) {
             int agentId = agentService.findByUserId(user.getId())
-                    .orElseThrow(() -> new RuntimeException("Agent introuvable pour l'utilisateur"))
+                    .orElseThrow(() -> new RuntimeException("Agent introuvable"))
                     .getId();
-            allEvents = agendaService.getAgentFullAgenda(agentId);
+            events = agendaService.getAgentFullAgendaDTO(agentId);
         } else if (user.getRole() == User.Role.PLAYER) {
             int playerId = playerRepository.findByUserId(user.getId())
-                    .orElseThrow(() -> new RuntimeException("Joueur introuvable pour l'utilisateur"))
+                    .orElseThrow(() -> new RuntimeException("Joueur introuvable"))
                     .getId();
-            allEvents = agendaService.getPlayerFullAgenda(playerId);
+            events = agendaService.getPlayerFullAgendaDTO(playerId);
+        } else {
+            events = List.of();
         }
 
-        return ResponseEntity.ok(allEvents);
+        return ResponseEntity.ok(events);
     }
+
 
 
     @GetMapping("/player/{playerId}")
