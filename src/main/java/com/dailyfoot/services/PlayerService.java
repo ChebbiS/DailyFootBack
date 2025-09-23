@@ -5,6 +5,7 @@ import com.dailyfoot.dto.CreatePlayerDTO;
 import com.dailyfoot.dto.PlayerDTO;
 import com.dailyfoot.entities.*;
 import com.dailyfoot.exceptions.CannotDeleteStrangerPlayerException;
+import com.dailyfoot.exceptions.CannotUpdatePlayerException;
 import com.dailyfoot.exceptions.PlayerAlreadyExistsException;
 import com.dailyfoot.exceptions.PlayerNotFoundException;
 import com.dailyfoot.repositories.*;
@@ -185,4 +186,26 @@ public class PlayerService {
         return playerRepository.findByEmail(email)
                 .map(PlayerDTO::new);
     }
+
+    public Player updatePlayer(Integer playerId, Player updatedPlayer) {
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException("Joueur non trouvé"));
+
+        Agent currentAgent = getCurrentAgent();
+
+        if (player.getAgent().getId() != currentAgent.getId()) {
+            throw new CannotUpdatePlayerException("Vous ne pouvez pas modifier un joueur qui ne vous appartient pas !");
+        }
+
+        if (updatedPlayer.getName() != null) player.setName(updatedPlayer.getName());
+        if (updatedPlayer.getAge() != 0) player.setAge(updatedPlayer.getAge());
+        if (updatedPlayer.getNationality() != null) player.setNationality(updatedPlayer.getNationality());
+        if (updatedPlayer.getPoste() != null) player.setPoste(updatedPlayer.getPoste());
+        if (updatedPlayer.getClub() != null) player.setClub(updatedPlayer.getClub());
+        if (updatedPlayer.getEmail() != null) player.setEmail(updatedPlayer.getEmail());
+        if (updatedPlayer.getImage() != null) player.setImage(updatedPlayer.getImage());
+
+        return playerRepository.save(player);
+    }
+
 }
