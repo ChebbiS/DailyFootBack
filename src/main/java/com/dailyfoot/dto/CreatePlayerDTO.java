@@ -17,12 +17,14 @@ public class CreatePlayerDTO {
     @Email
     private String email;
     private String image;
+    private double Height;
+    private double Weight;
 
     public CreatePlayerDTO() {
     }
 
     public CreatePlayerDTO(String name, int age, String nationality,
-                           String poste, String club, String email, String image) {
+                           String poste, String club, String email, String image, double Height, double Weight) {
         this.name = name;
         this.age = age;
         this.nationality = nationality;
@@ -30,6 +32,8 @@ public class CreatePlayerDTO {
         this.club = club;
         this.email = email;
         this.image = image;
+        this.Height = Height;
+        this.Weight = Weight;
     }
 
     public String getName() {
@@ -86,5 +90,21 @@ public class CreatePlayerDTO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public double getHeight() {
+        return Height;
+    }
+
+    public void setHeight(double height) {
+        Height = height;
+    }
+
+    public double getWeight() {
+        return Weight;
+    }
+
+    public void setWeight(double weight) {
+        Weight = weight;
     }
 }

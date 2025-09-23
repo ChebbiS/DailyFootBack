@@ -19,6 +19,8 @@ public class Player {
     private String poste;
     private String club;
     private String image;
+    private double height;
+    private double weight;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -38,7 +40,7 @@ public class Player {
     }
 
     public Player(Agent agent, int playerId, String name, int age, String nationality,
-                  String poste, String club, String email, String image) {
+                  String poste, String club, String email, String image, double height, double weight) {
         this.agent = agent;
         this.name = name;
         this.age = age;
@@ -47,6 +49,8 @@ public class Player {
         this.club = club;
         this.email = email;
         this.image = image;
+        this.height = height;
+        this.weight = weight;
     }
 
     public int getId() {
@@ -119,6 +123,22 @@ public class Player {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public User getUser() {

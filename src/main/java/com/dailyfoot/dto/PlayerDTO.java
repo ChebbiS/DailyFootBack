@@ -12,8 +12,10 @@ public class PlayerDTO {
     private String nationality;
     private String agentId;
     private int userId;
+    private double Height;
+    private double Weight;
 
-    public PlayerDTO(int id, String name, String poste, String image, String club, int age, String nationality) {
+    public PlayerDTO(int id, String name, String poste, String image, String club, int age, String nationality, double Height, double Weight) {
         this.id = id;
         this.name = name;
         this.poste = poste;
@@ -21,6 +23,8 @@ public class PlayerDTO {
         this.club = club;
         this.age = age;
         this.nationality = nationality;
+        this.Height = Height;
+        this.Weight = Weight;
     }
 
     public PlayerDTO(Player player) {
@@ -34,6 +38,8 @@ public class PlayerDTO {
         // Stocker l'identifiant de l'agent en toute sécurité (évite NPE sur user)
         this.agentId = player.getAgent() != null ? String.valueOf(player.getAgent().getId()) : null;
         this.userId = player.getUser() != null ? player.getUser().getId() : null;
+        this.Height = player.getHeight();
+        this.Weight = player.getWeight();
     }
 
     public Integer getUserId() {
@@ -106,5 +112,21 @@ public class PlayerDTO {
 
     public void setNationality(String nationality) {
         this.nationality = nationality;
+    }
+
+    public double getHeight() {
+        return Height;
+    }
+
+    public void setHeight(double height) {
+        Height = height;
+    }
+
+    public double getWeight() {
+        return Weight;
+    }
+
+    public void setWeight(double weight) {
+        Weight = weight;
     }
 }

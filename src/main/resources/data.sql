@@ -19,9 +19,9 @@ VALUES
 (1, 1);
 
 -- Insert player (depends on user and agent)
-INSERT INTO player (id, user_id, age, name, agent_id, email, club, image, nationality, poste)
+INSERT INTO player (id, user_id, age, name, agent_id, email, club, image, nationality, poste, height, weight)
 VALUES
-(1, 1, 17, 'Mohamed Chebbi', 1, 'mohamedchebbi@gmail.com', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/22a4f488807674ef24b4855146244b64.png?twic=v1/focus=226x193/cover=380x296', 'France', 'Défenseur');
+(1, 1, 17, 'Mohamed Chebbi', 1, 'mohamedchebbi@gmail.com', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/22a4f488807674ef24b4855146244b64.png?twic=v1/focus=226x193/cover=380x296', 'France', 'Défenseur', 180, 70);
 
 -- Insert statistics (depends on player)
 INSERT INTO statistic (

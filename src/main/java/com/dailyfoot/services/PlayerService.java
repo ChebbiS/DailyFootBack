@@ -68,6 +68,8 @@ public class PlayerService {
         player.setClub(request.getClub());
         player.setEmail(request.getEmail());
         player.setImage(request.getImage());
+        player.setHeight(request.getHeight());
+        player.setWeight(request.getWeight());
         player.setAgent(agent);
 
         // Génération et encodage du mot de passe
