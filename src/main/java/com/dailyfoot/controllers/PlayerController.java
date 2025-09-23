@@ -70,4 +70,16 @@ public class PlayerController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Player> updatePlayer(@PathVariable Integer id, @RequestBody Player updatedPlayer) {
+        Player player = playerService.updatePlayer(id, updatedPlayer);
+        return ResponseEntity.ok(player);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePlayer(@PathVariable Integer id) {
+        playerService.deletePlayer(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
