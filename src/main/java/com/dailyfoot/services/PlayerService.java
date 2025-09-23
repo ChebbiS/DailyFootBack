@@ -193,6 +193,8 @@ public class PlayerService {
         if (updatedPlayer.getClub() != null) player.setClub(updatedPlayer.getClub());
         if (updatedPlayer.getEmail() != null) player.setEmail(updatedPlayer.getEmail());
         if (updatedPlayer.getImage() != null) player.setImage(updatedPlayer.getImage());
+        if (updatedPlayer.getHeight() != 0) player.setHeight(updatedPlayer.getHeight());
+        if (updatedPlayer.getWeight() != 0) player.setWeight(updatedPlayer.getWeight());
 
         return playerRepository.save(player);
     }
