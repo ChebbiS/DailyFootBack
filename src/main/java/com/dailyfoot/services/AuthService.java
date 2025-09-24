@@ -38,14 +38,16 @@ public class AuthService {
     }
 
     public User register(RegisterDTO request, User.Role role) {
-        User savedUser = this.saveUser(request, role);
-
+        if (userService.getUserByEmail(request.getEmail()).isEmpty()) {
+            User savedUser = this.saveUser(request, role);
             Agent agent = new Agent();
             agent.setUser(savedUser);
             agentService.saveAgent(agent);
             this.setAgenda(savedUser, User.Role.AGENT);
 
-        return savedUser;
+            return savedUser;
+        }
+        throw new UsernameNotFoundException("Un utilisateur existe déjà avec cette adresse mail");
     }
 
     public User register(RegisterDTO request, User.Role role, Integer agentId) {
