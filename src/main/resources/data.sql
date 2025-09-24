@@ -9,7 +9,7 @@ DELETE FROM user;
 -- Insert users first (no dependencies)
 INSERT INTO user (id, name, email, password, role)
 VALUES
-(1, 'Young Crack', 'youngcrackfr@gmail.com', '$2y$10$syAsesqkvLZLMQSjYVpeV.FFQbSFKWfP96CJVNruObUUiBPbSv5O.', 'AGENT'),
+(1, 'Said Chebbi', 'youngcrackfr@gmail.com', '$2y$10$syAsesqkvLZLMQSjYVpeV.FFQbSFKWfP96CJVNruObUUiBPbSv5O.', 'AGENT'),
 (2, 'John Doe', 'johndoe@gmail.com', '$2a$10$DowJonesRkCzVpqkHj0bW6Ou0RmM0i3T6y6lHykjGnQYQ4s/x0pXyW', 'AGENT'),
 (3, 'Admin Root', 'admin@gmail.com', '$2a$10$DowJonesRkCzVpqkHj0bW6Ou0RmM0i3T6y6lHykjGnQYQ4s/x0pXyW', 'ADMIN');
 
@@ -21,7 +21,10 @@ VALUES
 -- Insert player (depends on user and agent)
 INSERT INTO player (id, user_id, age, name, agent_id, email, club, image, nationality, poste, height, weight)
 VALUES
-(1, 1, 17, 'Mohamed Chebbi', 1, 'mohamedchebbi@gmail.com', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/22a4f488807674ef24b4855146244b64.png?twic=v1/focus=226x193/cover=380x296', 'France', 'Défenseur', 180, 70);
+(1, 1, 17, 'Mohamed Chebbi', 1, 'mohamedchebbi@gmail.com', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/22a4f488807674ef24b4855146244b64.png?twic=v1/focus=226x193/cover=380x296', 'France', 'Défenseur', 180, 70),
+(2, 2, 17, 'Ruben Lomet', 1, 'lometchebbi@gmail.com', 'Stade Rennais', 'https://fff.twic.pics/https://media.fff.fr/uploads/images/8118f1bdb97e01af3897bdb707818dc8.png?twic=v1/focus=237x151/cover=380x296', 'France', 'Défenseur', 180, 70),
+(3, 3, 17, 'Kenny Assignon', 1, 'kennychebbi@gmail.com', 'Stade Rennais', 'https://www.footballdatabase.eu/images/photos/players/a_601/601507.jpg', 'France', 'Défenseur', 180, 70);
+
 
 -- Insert statistics (depends on player)
 INSERT INTO statistic (
@@ -37,13 +40,17 @@ INSERT INTO statistic (
     weight
 )
 VALUES
-(1, 1, '2023/2024', 20, 0, 0, 1, 0, 185, 75);
+(1, 1, '2023/2024', 20, 0, 0, 1, 0, 185, 75),
+(2, 2, '2023/2024', 20, 0, 0, 1, 0, 185, 75),
+(3, 3, '2023/2024', 20, 0, 0, 1, 0, 185, 75);
 
 -- Insert agenda (depends on user/agent/player)
 INSERT INTO agenda (id, owner_id, color, owner_type)
 VALUES
 (1, 1, '#000000', 'AGENT'),
-(2, 1, '#000000', 'PLAYER');
+(2, 1, '#000000', 'PLAYER'),
+(3, 2, '#000000', 'PLAYER'),
+(4, 3, '#000000', 'PLAYER');
 
 -- Insert events (depends on agenda)
 INSERT INTO event (id, agenda_id, owner_id, date_heure_debut, date_heure_fin, description, title, type)
